@@ -5,7 +5,7 @@
  * @description: Macro para GMzar Tinkering fazendo potes vazios de ceramica
  * @created_at: 2024-07-19
  * @updated_at: 2024-07-22
- * @shard: AnCorp Shard
+ * @shard: AnCorp Shard (https://www.gshard.com/index.html)
   */
 function makeEmptyBottle() {
     var skill = 'Tinkering';
