@@ -1,0 +1,73 @@
+/*
+ * @author: Antitribus
+ * @version: 1.0.1
+ * @name: makeLesserPoison
+ * @description: Macro para GMzar Alchemy fazendo potes de lesser poison
+ * @created_at: 2024-07-22
+ * @updated_at: 2024-07-22
+ * @shard: AnCorp Shard
+  */
+function makeLesserPoison() {
+    var skill = 'Alchemy';
+    var reagBag = '0x402232C4'; // serial da bag com nightshade
+    var bottleBag = '0x402232C4' // serial da bag para colocar os bottle pós cálculo de peso
+    var maxWeightAllow = Player.MaxWeight() - 50; // cálculo de peso máximo permitido
+    var reag = '0x0F88';
+    var bottle = '0x0F0E';
+
+    TextWindow.Clear();
+    TextWindow.Open();
+    TextWindow.Print('Instruções para a execução da macro:\n');
+    TextWindow.Print('- Estar perto de um banco para poder abrí-lo');
+    TextWindow.Print('- Ter uma bag no banco com os reagentes ("nightshade")');
+    TextWindow.Print('- Ter uma bag no banco com potes vazios ("empty bottles")');
+    TextWindow.Print('- Ter um mortar and pestle na backpack ("mochila")');
+    TextWindow.Print('- Realizar manualmente uma única confecção de um "lesser bottle" e manter o GUMP aberto');
+    TextWindow.Print('- Seja feliz e um bom jogo, Jesus te ama e eu tb <3!!');
+
+    while (Orion.SkillValue(skill, 'real') < 1000) {
+        var hasBottle = Orion.Count(bottle, '0x0000', 'backpack') >= 1;
+        var hasReag = Orion.Count(reag, 'any', 'backpack') >= 1;
+
+        if ((Player.Weight() < maxWeightAllow) && hasBottle && hasReag) {
+            Orion.ClearJournal();
+
+            gump0 = Orion.GetGump('last');
+
+            if ((gump0 !== null) && (!gump0.Replayed())) {
+                gump0.Select(Orion.CreateGumpHook(5008));
+                Orion.Wait(100);
+            }
+
+            Orion.WaitJournal('Voce pos|Voce falhou', Orion.Now(), Orion.Now() + 5000);
+        }
+        else {
+            Orion.Say('Banker Bank - Buy - Guards');
+
+            Orion.Print('Guardando os potes de poison no banco');
+            Orion.Wait(700);
+            Orion.UseObject(bottleBag);
+            Orion.Wait(700);
+            Orion.DragItemType(bottle, '0x0044', 'backpack', (200 - Orion.Count(bottle, '0x0044', bottleBag)));
+            Orion.Wait(300);
+            Orion.DropDraggedItem(bottleBag, 76, 98);
+            Orion.Wait(700);
+
+            Orion.Print('Pegando mais reagentes no banco');
+            Orion.UseObject(reagBag);
+            Orion.Wait(700);
+            Orion.DragItemType(reag, 'any', reagBag, (200 - Orion.Count(reag, 'any', 'backpack')));
+            Orion.Wait(300);
+            Orion.DropDraggedItem('backpack', 76, 98);
+            Orion.Wait(700);
+
+            Orion.Print('Pegando mais potes vazios no banco');
+            Orion.UseObject(bottleBag);
+            Orion.Wait(700);
+            Orion.DragItemType(bottle, '0x0000', bottleBag, (200 - Orion.Count(bottle, '0x0000', 'backpack')));
+            Orion.Wait(300);
+            Orion.DropDraggedItem('backpack', 76, 98);
+            Orion.Wait(700);
+        }
+    }
+}
