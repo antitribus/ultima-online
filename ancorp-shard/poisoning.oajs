@@ -1,0 +1,88 @@
+/*
+ * @author: Antitribus
+ * @version: 1.0.1
+ * @name: poisoning
+ * @description: Macro para GMzar Poisoning com oil cloths e lesser posion
+ * @created_at: 2024-09-22
+ * @updated_at: 2024-09-22
+ * @shard: AnCorp Shard
+ */
+function poisoning() {
+    var skill = 'Poisoning';
+    var maxWeightAllow = Player.MaxWeight() - 50; // cálculo de peso máximo permitido
+    var container = '0x40297044' // serial do container onde estão os itens
+    var weapon = '0x4038AFF2'; // serial da arma para aplicar veneno
+    var oilCloth = '0x175D';
+    var oilClothColor = '0x07D1';
+    var poisonBottle = '0x0F0E';
+    var poisonBottleColor = '0x0044';
+    var openBank = false; // true para caso o container esteja no banco
+    var showInfo = false;
+
+    if (showInfo) {
+        TextWindow.Clear();
+        TextWindow.Open();
+        TextWindow.Print('Instruções para a execução da macro:\n');
+        TextWindow.Print('- Ter um container com oil cloths e potes de veneno');
+        TextWindow.Print('- Seja feliz e um bom jogo, Jesus te ama e eu tb <3!!');
+    }
+
+    while (Orion.SkillValue(skill, 'real') < 1000) {
+        Orion.ClearJournal();
+
+        if (openBank) {
+            Orion.Say('Banker Bank - Buy - Guards');
+            Orion.Wait(500);
+        }
+
+        var hasOilCloths = Orion.Count(oilCloth, oilClothColor, backpack) > 0;
+        var hasPoisonBottle = Orion.Count(poisonBottle, poisonBottleColor, backpack) > 0;
+
+        if ((Player.Weight() < maxWeightAllow)) {
+
+            if (!hasOilCloths) {
+                Orion.Print('Pegando oil cloths');
+                Orion.Wait(700);
+                Orion.UseObject(container);
+                Orion.DragItemType(oilCloth, oilClothColor, container, (200 - Orion.Count(oilCloth, oilClothColor, backpack)));
+                Orion.Wait(700);
+                Orion.DropDraggedItem(backpack, 76, 98);
+                Orion.Wait(700);
+            }
+
+            if (!hasPoisonBottle) {
+                Orion.Print('Pegando poison bottle');
+                Orion.Wait(700);
+                Orion.UseObject(container);
+                Orion.DragItemType(poisonBottle, poisonBottleColor, container, (200 - Orion.Count(poisonBottle, poisonBottleColor, backpack)));
+                Orion.Wait(700);
+                Orion.DropDraggedItem(backpack, 73, 98);
+                Orion.Wait(700);
+            }
+
+            Orion.Print('Usando skill Poisoning');
+            Orion.UseSkill(skill);
+            Orion.Wait(1000);
+
+            Orion.Print('Escolhendo pote de poison');
+            Orion.TargetType(poisonBottle, poisonBottleColor, backpack);
+            Orion.Wait(500);
+
+            Orion.Print('Aplicando veneno na arma');
+            Orion.TargetObject(weapon);
+
+            Orion.WaitJournal('aplicou|falhou|errou', Orion.Now(), Orion.Now() + 7500);
+
+            if (Orion.JournalCount('aplicou')) {
+                Orion.UseType(oilCloth);
+                Orion.Wait(500);
+                Orion.TargetObject(weapon);
+                Orion.Wait(500);
+            }
+
+            if (Orion.JournalCount('falhou|errou')) {
+                continue;
+            }
+        }
+    }
+}
