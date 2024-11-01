@@ -1,6 +1,6 @@
 /*
  * @author: Antitribus
- * @version: 1.0.0
+ * @version: 1.0.1
  * @name: make_fire_fish
  * @description: Macro para fazer fire fish
  * @created_at: 2024-10-30
@@ -11,6 +11,8 @@
 var container = '0x4005B66C';
 var maxWeightAllow = Player.MaxWeight() - 50;
 var fireFish = '0x097B';
+var retries = 0;
+var totalRetries = 3;
 
 const ingredients = [
     { name: 'raw fish steaks', type: '0x097A', color: 'any', quantity: 200, min: 5 },
@@ -26,6 +28,15 @@ const ingredients = [
  */
 function main() {
     while (true) {
+        var hasAll = hasAllIngredients(ingredients);
+
+        if (!hasAll) {
+            guardCookedFireFishs();
+            guardIngredients(ingredients);
+            Orion.Say('Acabou o milho, acabou a pipoca');
+            return;
+        }
+
         restock(ingredients);
 
         if ((Player.Weight() < maxWeightAllow)) {
@@ -70,8 +81,44 @@ function restock(ingredients) {
             Orion.Print('Pegando ingrediente ' + ingredient.name);
             moveItems(container, backpack, ingredient.type, ingredient.color, ingredient.quantity);
             Orion.Wait(300);
+            retries++;
         }
     });
+}
+
+/**
+ * Guarda os ingredientes no container
+ * @param {*} ingredients 
+ */
+function guardIngredients(ingredients) {
+    ingredients.forEach(function (ingredient) {
+        var hasIngredient = Orion.Count(ingredient.type, ingredient.color, backpack);
+
+        if (hasIngredient) {
+            Orion.Print('Guardando ingrediente ' + ingredient.name);
+            moveItems(backpack, container, ingredient.type, ingredient.color, 1000);
+            Orion.Wait(300);
+        }
+    });
+}
+
+/**
+ * Verifica se tem todos os ingredientes necessários
+ * @param {*} ingredients 
+ */
+function hasAllIngredients(ingredients) {
+    var numErrors = 0;
+
+    ingredients.forEach(function (ingredient) {
+        var hasIngredient = Orion.Count(ingredient.type, ingredient.color, container) >= ingredient.min;
+
+        if (!hasIngredient) {
+            Orion.Print('Sem ingrediente ' + ingredient.name);
+            numErrors++
+        }
+    });
+
+    return numErrors == 0;
 }
 
 /**
