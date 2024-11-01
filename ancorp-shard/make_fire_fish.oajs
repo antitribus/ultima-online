@@ -1,0 +1,106 @@
+/*
+ * @author: Antitribus
+ * @version: 1.0.0
+ * @name: make_fire_fish
+ * @description: Macro para fazer fire fish
+ * @created_at: 2024-10-30
+ * @updated_at: 2024-10-30
+ * @shard: AnCorp Shard
+  */
+
+var container = '0x4005B66C';
+var maxWeightAllow = Player.MaxWeight() - 50;
+var fireFish = '0x097B';
+
+const ingredients = [
+    { name: 'raw fish steaks', type: '0x097A', color: 'any', quantity: 200, min: 5 },
+    { name: 'blood moss', type: '0x0F7B', color: 'any', quantity: 100, min: 2 },
+    { name: 'mandrake roots', type: '0x0F86', color: 'any', quantity: 100, min: 2 },
+    { name: 'batwings', type: '0x0F78', color: 'any', quantity: 100, min: 2 },
+    { name: 'blood wood', type: '0x1BDD', color: '0x04C2', quantity: 100, min: 1 },
+    { name: 'oak wood', type: '0x1BDD', color: '0x07DA', quantity: 100, min: 1 }
+];
+
+/**
+ * Executa o macro até possuir ingredientes no container
+ */
+function main() {
+    while (true) {
+        restock(ingredients);
+
+        if ((Player.Weight() < maxWeightAllow)) {
+            Orion.ClearJournal();
+
+            gump0 = Orion.GetGump('last');
+
+            if ((gump0 !== null) && (!gump0.Replayed())) {
+                gump0.Select(Orion.CreateGumpHook(5008));
+                Orion.Wait(100);
+            }
+
+            Orion.WaitJournal('Voce pos|Voce falhou', Orion.Now(), Orion.Now() + 6000);
+        } else {
+            guardCookedFireFishs();
+        }
+    }
+}
+
+/**
+ * Verifica se chegou ao limite do peso
+ * @returns boolean
+ */
+function checkWeigth() {
+    return Player.Weight() < maxWeightAllow;
+}
+
+/**
+ * Verifica quantidade dos itens para pegar e reestocar a bolsa
+ * @param {*} ingredients 
+ */
+function restock(ingredients) {
+    ingredients.forEach(function (ingredient) {
+        var hasIngredient = Orion.Count(ingredient.type, ingredient.color, backpack) >= ingredient.min;
+
+        if (!checkWeigth()) {
+            Orion.Print('Backpack muito pesada');
+            return;
+        }
+
+        if (!hasIngredient) {
+            Orion.Print('Pegando ingrediente ' + ingredient.name);
+            moveItems(container, backpack, ingredient.type, ingredient.color, ingredient.quantity);
+            Orion.Wait(300);
+        }
+    });
+}
+
+/**
+ * Verifica se tem a panela na bolsa
+ * @returns boolean
+ */
+function checkSkillet() {
+    return Orion.Count('0x097F', 'any', backpack)
+}
+
+/**
+ * Move itens entre containers
+ * @param string containerOrigin 
+ * @param string containerDestiny 
+ * @param string type 
+ * @param string color 
+ * @param integer quantity 
+ */
+function moveItems(containerOrigin, containerDestiny, type, color, quantity) {
+    Orion.UseObject(containerOrigin);
+    Orion.Wait(200);
+    Orion.DragItemType(type, color, containerOrigin, (quantity - Orion.Count(type, color, containerDestiny)));
+    Orion.Wait(200);
+    Orion.DropDraggedItem(containerDestiny, 76, 98);
+}
+
+/**
+ * Guarda os peixes de fogo no container
+ */
+function guardCookedFireFishs() {
+    moveItems(backpack, container, fireFish, 'any', 1000);
+}
