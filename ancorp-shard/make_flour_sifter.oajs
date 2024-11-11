@@ -32,14 +32,14 @@ function showInformation() {
     TextWindow.Open();
 }
 
-function Autostart(){
+function Autostart() {
     Orion.Wait(2000);
     Orion.CharPrint(self, 906, 'Bom jogo!');
     Orion.Wait(100);
     Orion.Exec('main', true);
-	Orion.Wait(100);
-	 Orion.Exec('guards', true);
-	Orion.Wait(100);
+    Orion.Wait(100);
+    Orion.Exec('guards', true);
+    Orion.Wait(100);
 }
 
 /**
@@ -55,8 +55,8 @@ function main() {
 
     var numberRunePositionHome = 1;
     var numberRunePositionVendor = 18;
-	
-	var guardGold = true; // Habilita guardar ouro (bug)
+
+    var guardGold = true; // Habilita guardar ouro (bug)
     var isSellItems = true; // Habilita venda de itens
     var vendorName = 'Andras'; // Nome do vendedor
 
@@ -89,7 +89,7 @@ function main() {
     // Inicia indo para casa
     recall(getSerialByObjectName('runebook'), numberRunePositionHome);
     walkToInsideHome(home, getObjFullName('door'));
-	
+
     while (true) {
         Orion.ClearJournal();
 
@@ -118,8 +118,8 @@ function main() {
 
         restockMaterials(getObjFullName('container_materials'), materials);
 
-		closeGump();
-		
+        closeGump();
+
         if (checkMaxWeigthAllow() && checkMaxManufactoringItems(manufacturedItem, manufacturedItemColor, manufacturedItemLimit)) {
             Orion.Print("Fabricando item " + manufacturedItemName);
             Orion.UseObject(getObjFullName('tool'));
@@ -132,9 +132,9 @@ function main() {
                 recall(getSerialByObjectName('runebook'), numberRunePositionHome);
                 walkToInsideHome(home, getObjFullName('door'));
                 if (guardGold) {
-	                openHomeBank(getObjFullName('plate'));
-	                safeGold(Player.BankSerial());
-	            }    
+                    openHomeBank(getObjFullName('plate'));
+                    safeGold(Player.BankSerial());
+                }
             } else {
                 Orion.Print('Guardando os itens fabricados');
                 guardManufacturedItems(getObjFullName('container_to_guard'), manufacturedItem, manufacturedItemColor);
@@ -414,19 +414,19 @@ function repeatLastAction(executionTime) {
     gumpIDs.forEach(function (id) {
         if (Orion.WaitForGump(1000)) {
             var gump = Orion.GetGump('last');
-            
+
             if ((gump !== null) && (!gump.Replayed()) && (gump.ID() === '0x00000485')) {
-            	Orion.Print('Gump: ' + id);
+                Orion.Print('Gump: ' + id);
                 gump.Select(Orion.CreateGumpHook(id));
                 Orion.Wait(250);
             }
         }
     });
 
-	
+
     Orion.Wait(executionTime);
 }
 
 function closeGump() {
-	Orion.CloseGump('generic', 'any', '0x00000485');
+    Orion.CloseGump('generic', 'any', '0x00000485');
 }
