@@ -1,6 +1,6 @@
 /*
 * @author: Antitribus
-* @version: 1.1.0
+* @version: 1.1.1
 * @name: make_flour_sifter
 * @description: Macro para fazer flour sifter
 * @created_at: 2024-11-02
@@ -15,7 +15,7 @@ function showInformation() {
     TextWindow.Clear();
     TextWindow.Print('/*');
     TextWindow.Print('* @author: Antitribus');
-    TextWindow.Print('* @version: 1.0.7');
+    TextWindow.Print('* @version: 1.1.1');
     TextWindow.Print('* @name: make_flour_sifter');
     TextWindow.Print('* @description: Macro para fazer flour sifter');
     TextWindow.Print('* @created_at: 2024-11-02');
