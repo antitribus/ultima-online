@@ -1,12 +1,58 @@
 /*
 * @author: Antitribus
-* @version: 1.1.1
+* @version: 1.2.0
 * @name: make_flour_sifter
 * @description: Macro para fazer flour sifter
 * @created_at: 2024-11-02
-* @updated_at: 2024-11-10
+* @updated_at: 2024-11-14
 * @shard: AnCorp Shard
 */
+
+var showInfo = false; // true - Mostra informações de como rodar o macro | false - desabilita
+var manufacturedItemLimit = 10; // Limite de itens a serem fabricados antes de guardar
+var manufacturedItemName = 'flour sifter'; // Nome do item à ser contruido, bottle, flour_sifter...
+var manufacturedItemColor = 'any'; // Cor do item que será construido
+var manufacturingTimeMs = 6000; // Tempo de fabricação do item
+var manufacturedItem = '0x103E'; // Graphic do item que será construido
+
+var numberRunePositionHome = 1;
+var numberRunePositionVendor = 18;
+
+var guardGold = true; // Habilita guardar ouro (bug)
+var isSellItems = true; // Habilita venda de itens
+var vendorName = 'Andras'; // Nome do vendedor
+
+// Dados de configuração da posição dos objetos na casa
+var home = {
+    door: { x: 2289, y: 1495, z: -87 },
+    container_materials: { x: 2287, y: 1487, z: -84 }
+};
+
+var objs = [
+    { name: 'tool', message: 'Selecione a ferramenta' },
+    { name: 'runebook', message: 'Selecione o livro de runas' },
+    { name: 'plate', message: 'Selecione a placa da casa' },
+    { name: 'door', message: 'Selecione a porta da casa' },
+    { name: 'container_materials', message: 'Selecione o container dos materiais' },
+    { name: 'container_to_guard', message: 'Selecione o container onde guardar itens' },
+];
+
+const materials = [
+    { name: 'iron ingot', type: '0x1BF2', color: '0x0000', quantity: 300, min: 3 }
+];
+
+/**
+* Execução para autostart
+*/
+function Autostart() {
+    Orion.Wait(2000);
+    Orion.CharPrint(self, 906, 'Bom jogo!');
+    Orion.Wait(100);
+    Orion.Exec('main', true);
+    Orion.Wait(100);
+    Orion.Exec('guards', true);
+    Orion.Wait(100);
+}
 
 /**
  * Mostra instruções para rodar o macro
@@ -15,7 +61,7 @@ function showInformation() {
     TextWindow.Clear();
     TextWindow.Print('/*');
     TextWindow.Print('* @author: Antitribus');
-    TextWindow.Print('* @version: 1.1.1');
+    TextWindow.Print('* @version: 1.2.0');
     TextWindow.Print('* @name: make_flour_sifter');
     TextWindow.Print('* @description: Macro para fazer flour sifter');
     TextWindow.Print('* @created_at: 2024-11-02');
@@ -32,53 +78,10 @@ function showInformation() {
     TextWindow.Open();
 }
 
-function Autostart() {
-    Orion.Wait(2000);
-    Orion.CharPrint(self, 906, 'Bom jogo!');
-    Orion.Wait(100);
-    Orion.Exec('main', true);
-    Orion.Wait(100);
-    Orion.Exec('guards', true);
-    Orion.Wait(100);
-}
-
 /**
-* Executa o macro até possuir materiais
+* Execução principal
 */
 function main() {
-    var showInfo = false; // true - Mostra informações de como rodar o macro | false - desabilita
-    var manufacturedItemLimit = 100; // Limite de itens a serem fabricados antes de guardar
-    var manufacturedItemName = 'flour sifter'; // Nome do item à ser contruido, bottle, flour_sifter...
-    var manufacturedItemColor = 'any'; // Cor do item que será construido
-    var manufacturingTimeMs = 6000; // Tempo de fabricação do item
-    var manufacturedItem = '0x103E'; // Graphic do item que será construido
-
-    var numberRunePositionHome = 1;
-    var numberRunePositionVendor = 18;
-
-    var guardGold = true; // Habilita guardar ouro (bug)
-    var isSellItems = true; // Habilita venda de itens
-    var vendorName = 'Andras'; // Nome do vendedor
-
-    // Dados de configuração da posição dos objetos na casa
-    var home = {
-        door: { x: 2289, y: 1495, z: -87 },
-        container_materials: { x: 2287, y: 1487, z: -84 }
-    };
-
-    var objs = [
-        { name: 'tool', message: 'Selecione a ferramenta' },
-        { name: 'runebook', message: 'Selecione o livro de runas' },
-        { name: 'plate', message: 'Selecione a placa da casa' },
-        { name: 'door', message: 'Selecione a porta da casa' },
-        { name: 'container_materials', message: 'Selecione o container dos materiais' },
-        { name: 'container_to_guard', message: 'Selecione o container onde guardar itens' },
-    ];
-
-    const materials = [
-        { name: 'iron ingot', type: '0x1BF2', color: '0x0000', quantity: 300, min: 3 }
-    ];
-
     if (showInfo) {
         showInformation();
     }
@@ -112,7 +115,7 @@ function main() {
             Orion.Print('Guardando os materiais restantes');
             guardMaterials(getObjFullName('container_to_guard'), materials);
 
-            Orion.Say('Você não possui os materiais necessários.');
+            guardOrSell();
             return;
         }
 
@@ -126,20 +129,27 @@ function main() {
             Orion.Wait(500);
             repeatLastAction(manufacturingTimeMs);
         } else {
-            if (isSellItems) {
-                recall(getSerialByObjectName('runebook'), numberRunePositionVendor);
-                sell(vendorName, manufacturedItemName, manufacturedItem, manufacturedItemColor);
-                recall(getSerialByObjectName('runebook'), numberRunePositionHome);
-                walkToInsideHome(home, getObjFullName('door'));
-                if (guardGold) {
-                    openHomeBank(getObjFullName('plate'));
-                    safeGold(Player.BankSerial());
-                }
-            } else {
-                Orion.Print('Guardando os itens fabricados');
-                guardManufacturedItems(getObjFullName('container_to_guard'), manufacturedItem, manufacturedItemColor);
-            }
+            guardOrSell();
         }
+    }
+}
+
+/**
+ * Guarda ou vender itens
+ */
+function guardOrSell() {
+    if (isSellItems) {
+        recall(getSerialByObjectName('runebook'), numberRunePositionVendor);
+        sell(vendorName, manufacturedItemName, manufacturedItem, manufacturedItemColor);
+        recall(getSerialByObjectName('runebook'), numberRunePositionHome);
+        walkToInsideHome(home, getObjFullName('door'));
+        if (guardGold) {
+            openHomeBank(getObjFullName('plate'));
+            safeGold(Player.BankSerial());
+        }
+    } else {
+        Orion.Print('Guardando os itens fabricados');
+        guardManufacturedItems(getObjFullName('container_to_guard'), manufacturedItem, manufacturedItemColor);
     }
 }
 
@@ -333,14 +343,453 @@ function restockMaterials(container, materials) {
 * @param array materials 
 */
 function guardMaterials(container, materials) {
-    var quantity = Orion.Count(graphic, color, backpack);
-
     materials.forEach(function (material) {
-        var hasMaterial = Orion.Count(material.type, material.color, backpack);
+        var quantityMaterial = Orion.Count(material.type, material.color, backpack);
+        var hasMaterial = quantityMaterial > 0;
 
         if (hasMaterial) {
             Orion.Print('Guardando material ' + material.name);
-            moveItems(backpack, container, material.type, material.color, quantity);
+            moveItems(backpack, container, material.type, material.color, quantityMaterial);
+            Orion.Wait(300);
+        }
+    });
+}
+
+/**
+* Verifica se tem todos os materiais necessários
+* @param string container 
+* @param array materials 
+*/
+function hasMaterials(container, materials) {
+    var numErrors = 0;
+
+    Orion.UseObject(container);
+    Orion.Wait(500);
+
+    materials.forEach(function (material) {
+        var hasMaterial = Orion.Count(material.type, material.color, container) >= material.min;
+
+        if (!hasMaterial) {
+            Orion.Print('Sem material ' + material.name);
+            numErrors++
+        }
+    });
+
+    return numErrors == 0;
+}
+
+/**
+* Verifica se tem a ferramenta na bolsa
+* @param string tool 
+* @returns boolean
+*/
+function hasTool(tool) {
+    return Orion.Count(tool, 'any', backpack) == 0;
+}
+
+/**
+* Move itens entre containers
+* @param string containerOrigin 
+* @param string containerDestiny 
+* @param string graphic 
+* @param string color 
+* @param integer quantity 
+*/
+function moveItems(containerOrigin, containerDestiny, graphic, color, quantity) {
+    Orion.UseObject(containerOrigin);
+    Orion.Wait(200);
+    Orion.DragItemType(graphic, color, containerOrigin, (quantity - Orion.Count(graphic, color, containerDestiny)));
+    Orion.Wait(200);
+    Orion.DropDraggedItem(containerDestiny, 76, 98);
+}
+
+/**
+* Guarda os itens da backpack no container
+* @param string containerDestiny 
+* @param string graphic 
+*/
+function guardManufacturedItems(container, graphic, color) {
+    var quantity = Orion.Count(graphic, color, backpack);
+    moveItems(backpack, container, graphic, color, quantity);
+}
+
+/**
+* Repete a última ação de um gump
+* @param integer executionTime 
+*/
+function repeatLastAction(executionTime) {
+    var gumpIDs = [2, 5002, 10120, 0];
+
+    gumpIDs.forEach(function (id) {
+        if (Orion.WaitForGump(1000)) {
+            var gump = Orion.GetGump('last');
+
+            if ((gump !== null) && (!gump.Replayed()) && (gump.ID() === '0x00000485')) {
+                Orion.Print('Gump: ' + id);
+                gump.Select(Orion.CreateGumpHook(id));
+                Orion.Wait(250);
+            }
+        }
+    });
+
+
+    Orion.Wait(executionTime);
+}
+
+function closeGump() {
+    Orion.CloseGump('generic', 'any', '0x00000485');
+}/*
+* @author: Antitribus
+* @version: 1.2.0
+* @name: make_flour_sifter
+* @description: Macro para fazer flour sifter
+* @created_at: 2024-11-02
+* @updated_at: 2024-11-14
+* @shard: AnCorp Shard
+*/
+
+var showInfo = false; // true - Mostra informações de como rodar o macro | false - desabilita
+var manufacturedItemLimit = 10; // Limite de itens a serem fabricados antes de guardar
+var manufacturedItemName = 'flour sifter'; // Nome do item à ser contruido, bottle, flour_sifter...
+var manufacturedItemColor = 'any'; // Cor do item que será construido
+var manufacturingTimeMs = 6000; // Tempo de fabricação do item
+var manufacturedItem = '0x103E'; // Graphic do item que será construido
+
+var numberRunePositionHome = 1;
+var numberRunePositionVendor = 18;
+
+var guardGold = true; // Habilita guardar ouro (bug)
+var isSellItems = true; // Habilita venda de itens
+var vendorName = 'Andras'; // Nome do vendedor
+
+// Dados de configuração da posição dos objetos na casa
+var home = {
+    door: { x: 2289, y: 1495, z: -87 },
+    container_materials: { x: 2287, y: 1487, z: -84 }
+};
+
+var objs = [
+    { name: 'tool', message: 'Selecione a ferramenta' },
+    { name: 'runebook', message: 'Selecione o livro de runas' },
+    { name: 'plate', message: 'Selecione a placa da casa' },
+    { name: 'door', message: 'Selecione a porta da casa' },
+    { name: 'container_materials', message: 'Selecione o container dos materiais' },
+    { name: 'container_to_guard', message: 'Selecione o container onde guardar itens' },
+];
+
+const materials = [
+    { name: 'iron ingot', type: '0x1BF2', color: '0x0000', quantity: 300, min: 3 }
+];
+
+/**
+* Execução para autostart
+*/
+function Autostart() {
+    Orion.Wait(2000);
+    Orion.CharPrint(self, 906, 'Bom jogo!');
+    Orion.Wait(100);
+    Orion.Exec('main', true);
+    Orion.Wait(100);
+    Orion.Exec('guards', true);
+    Orion.Wait(100);
+}
+
+/**
+ * Mostra instruções para rodar o macro
+ */
+function showInformation() {
+    TextWindow.Clear();
+    TextWindow.Print('/*');
+    TextWindow.Print('* @author: Antitribus');
+    TextWindow.Print('* @version: 1.2.0');
+    TextWindow.Print('* @name: make_flour_sifter');
+    TextWindow.Print('* @description: Macro para fazer flour sifter');
+    TextWindow.Print('* @created_at: 2024-11-02');
+    TextWindow.Print('* @updated_at: 2024-11-04');
+    TextWindow.Print('* @shard: AnCorp Shard');
+    TextWindow.Print('*/');
+
+    TextWindow.Print('\n\nInstruções para a execução da macro:\n');
+    TextWindow.Print('- Criar uma lista em Agents > Shop com nome flour sifter e adicionar o flour sifer como item');
+    TextWindow.Print('- Configurar as posições das runas nas variáveis "numberRunePositionHome" e "numberRunePositionVendor"');
+    TextWindow.Print('- Configurar as coordenadas da entrada da porta do lado de fora da casa e o tile próximo aos containers de materiais e de guardar na variável "home"');
+    TextWindow.Print('- Configurar os objetos iniciais');
+    TextWindow.Print('- Seja feliz e um bom jogo, Jesus te ama e eu tb <3!!');
+    TextWindow.Open();
+}
+
+/**
+* Execução principal
+*/
+function main() {
+    if (showInfo) {
+        showInformation();
+    }
+
+    // Configura objetos
+    config(objs);
+
+    // Inicia indo para casa
+    recall(getSerialByObjectName('runebook'), numberRunePositionHome);
+    walkToInsideHome(home, getObjFullName('door'));
+
+    while (true) {
+        Orion.ClearJournal();
+
+        if (Orion.InJournal('save')) {
+            Orion.Print('Aguardando o mundo ser salvo');
+            Orion.Wait(20000);
+        }
+
+        if (!hasTool(getObjFullName('tool'))) {
+            Orion.Print('Ferramenta não encontrada na backpack');
+            return;
+        }
+
+        var hasAll = hasMaterials(getObjFullName('container_materials'), materials);
+
+        if (!hasAll) {
+            Orion.Print('Guardando os itens fabricados por falta de materiais');
+            guardManufacturedItems(getObjFullName('container_to_guard'), manufacturedItem, manufacturedItemColor);
+
+            Orion.Print('Guardando os materiais restantes');
+            guardMaterials(getObjFullName('container_to_guard'), materials);
+
+            guardOrSell();
+            return;
+        }
+
+        restockMaterials(getObjFullName('container_materials'), materials);
+
+        closeGump();
+
+        if (checkMaxWeigthAllow() && checkMaxManufactoringItems(manufacturedItem, manufacturedItemColor, manufacturedItemLimit)) {
+            Orion.Print("Fabricando item " + manufacturedItemName);
+            Orion.UseObject(getObjFullName('tool'));
+            Orion.Wait(500);
+            repeatLastAction(manufacturingTimeMs);
+        } else {
+            guardOrSell();
+        }
+    }
+}
+
+/**
+ * Guarda ou vender itens
+ */
+function guardOrSell() {
+    if (isSellItems) {
+        recall(getSerialByObjectName('runebook'), numberRunePositionVendor);
+        sell(vendorName, manufacturedItemName, manufacturedItem, manufacturedItemColor);
+        recall(getSerialByObjectName('runebook'), numberRunePositionHome);
+        walkToInsideHome(home, getObjFullName('door'));
+        if (guardGold) {
+            openHomeBank(getObjFullName('plate'));
+            safeGold(Player.BankSerial());
+        }
+    } else {
+        Orion.Print('Guardando os itens fabricados');
+        guardManufacturedItems(getObjFullName('container_to_guard'), manufacturedItem, manufacturedItemColor);
+    }
+}
+
+/**
+ * Configuração de objetos
+ * @param array objs 
+ */
+function config(objs) {
+    objs.forEach(function (obj) {
+        if (!Orion.ObjectExists(obj.name) && !Orion.FindObject(obj.name)) {
+            addObject(obj);
+        }
+    });
+}
+
+/**
+ * Retorna o serial de um objeto pelo seu nome completo
+ * @param string name 
+ * @returns 
+ */
+function getSerialByObjectName(name) {
+    return Orion.GetSerial(getObjFullName(name));
+}
+
+/**
+ * Adiciona um objeto
+ * @param array obj 
+ */
+function addObject(obj) {
+    var fullObjName = getObjFullName(obj.name);
+
+    if (!Orion.FindObject(fullObjName)) {
+        Orion.CharPrint('self', '0x0010', obj.message);
+        Orion.AddObject(fullObjName);
+        while (Orion.HaveTarget()) {
+            Orion.Wait(20);
+        }
+    }
+}
+
+/**
+ * Retorna o nome completo do objeto
+ * @param string name 
+ * @returns 
+ */
+function getObjFullName(name) {
+    return name + '_' + Player.Name()
+}
+
+/**
+ * 
+ * @param object homeConfig 
+ * @param string door 
+ */
+function walkToInsideHome(homeConfig, door) {
+    Orion.Print('Entrando na casa');
+    Orion.WalkTo(homeConfig.door.x, homeConfig.door.y, homeConfig.door.z);
+    Orion.Wait(2000);
+    Orion.UseObject(door);
+    Orion.Wait(2000);
+    Orion.WalkTo(Player.X(), Player.Y() - 6, Player.Z());
+    Orion.Wait(1000);
+    Orion.UseObject(door);
+    Orion.Wait(1000);
+    Orion.WalkTo(homeConfig.container_materials.x, homeConfig.container_materials.y, homeConfig.container_materials.z);
+    Orion.Wait(6000);
+}
+
+/**
+ * Abre o banco da casa pela placa
+ * @param string plate 
+ */
+function openHomeBank(plate) {
+    Orion.Wait(1000);
+    Orion.UseObject(plate);
+    Orion.Wait(1000);
+
+    if (Orion.WaitForGump(1000)) {
+        var gump0 = Orion.GetGump('last');
+        if ((gump0 !== null)) {
+            gump0.Select(Orion.CreateGumpHook(6));
+            Orion.Wait(100);
+        }
+    }
+}
+
+/**
+ * Guarda o ouro no banco
+ */
+function safeGold(container) {
+    Orion.Wait(1000);
+    var gold = '0x0EED';
+
+    moveItems(backpack, container, '0x0EED', 'any', Orion.Count(gold, 'any', backpack));
+    Orion.Print('Ouro guardado com sucesso');
+}
+
+/**
+ * Vender itens
+ * @param string vendorName 
+ * @param string itemName 
+ * @param string graphic 
+ * @param string color 
+ */
+function sell(vendorName, itemName, graphic, color) {
+    Orion.Print('Iniciando venda de itens para ' + vendorName);
+
+    while (Orion.Count(graphic, color, backpack)) {
+        Orion.Print('Mais uma venda realizada para ' + vendorName);
+        Orion.Sell(itemName, vendorName);
+        Orion.Wait(6000)
+    }
+}
+
+/**
+ * Meditação suficiente para recall
+ */
+function meditation() {
+    while (Player.Mana() < 50) {
+        Orion.UseSkill('Meditation');
+        Orion.Wait(1000);
+    }
+}
+
+/**
+ * Recall usando um runebook e um número de posição no livro
+ * @param string runebookSerial 
+ * @param integer numberRunePosition 
+ */
+function recall(runebookSerial, numberRunePosition) {
+    meditation();
+
+    var uid = runebookSerial.replace('x', '');
+    Orion.Say('.recall ' + uid + ',' + numberRunePosition);
+    Orion.Wait(13500);
+}
+
+/**
+* Retorna o limite de peso suportado
+* @returns integer
+*/
+function getMaxWeightLimit() {
+    return Player.MaxWeight() - 50;
+}
+
+/**
+* Verifica se chegou ao limite do peso
+* @returns boolean
+*/
+function checkMaxWeigthAllow() {
+    var maxWeightAllow = Player.MaxWeight() - 50;
+    return Player.Weight() < maxWeightAllow;
+}
+
+/**
+ * 
+ * @param string graphic 
+ * @param string color 
+ * @param integer limit 
+ * @returns boolean
+ */
+function checkMaxManufactoringItems(graphic, color, limit) {
+    return Orion.Count(graphic, color, backpack) < limit;
+}
+
+/**
+* Verifica quantidade dos itens para pegar e reestocar a bolsa
+* @param string container 
+* @param array materials 
+*/
+function restockMaterials(container, materials) {
+    materials.forEach(function (material) {
+        var hasMaterial = Orion.Count(material.type, material.color, backpack) >= material.min;
+
+        if (!checkMaxWeigthAllow()) {
+            Orion.Print('Você está com muitos itens na sua backpack');
+            return;
+        }
+
+        if (!hasMaterial) {
+            Orion.Print('Pegando material ' + material.name);
+            moveItems(container, backpack, material.type, material.color, material.quantity);
+            Orion.Wait(300);
+        }
+    });
+}
+
+/**
+* Guarda os ingredientes no container
+* @param string container 
+* @param array materials 
+*/
+function guardMaterials(container, materials) {
+    materials.forEach(function (material) {
+        var quantityMaterial = Orion.Count(material.type, material.color, backpack);
+        var hasMaterial = quantityMaterial > 0;
+
+        if (hasMaterial) {
+            Orion.Print('Guardando material ' + material.name);
+            moveItems(backpack, container, material.type, material.color, quantityMaterial);
             Orion.Wait(300);
         }
     });
