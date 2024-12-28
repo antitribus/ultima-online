@@ -1,0 +1,686 @@
+
+/**
+ * Macro para fusão de minérios usando baú de materiais
+ * @author: desconhecido
+ * @contributor: Antitribus
+ * @updated_at: 2024-12-28
+ * @shard: HellFire <hfshard.com.br>
+ */
+
+const forgeID = "0x40031011"; // Adicione o id da sua forja pegando com "_info"
+const materialContainerID = '0x400B509D'; // Adicione o id do seu baú de materiais pegando com "_info"
+
+// Escreva aqui um dos nomes de minério que será fabricado
+// Possibilidades:
+// adamantium | darkGolden | deepSea | demise | demoniac | eclipse | electra | holy | plague | sunlight | sunrise | titan  
+const ingotType = 'titan';
+
+const ingots = {
+    iron: { gump: 1, gumpQuantity: 1, type: "0x1BEF", color: "0x0000" },
+    copper: { gump: 5, gumpQuantity: 2, type: "0x1BE3", color: "0x0641" },
+    gold: { gump: 7, gumpQuantity: 3, type: "0x1BE9", color: "0x084D" },
+    silver: { gump: 10, gumpQuantity: 1, type: "0x1BF5", color: "0x0482" },
+    rose: { gump: 8, gumpQuantity: 4, type: "0x1BEF", color: "0x001C" },
+    agapite: { gump: 9, gumpQuantity: 5, type: "0x1BEF", color: "0x0400" },
+    prata: { gump: 10, gumpQuantity: 6, type: "0x1BF5", color: "0x0482" },
+    verite: { gump: 11, gumpQuantity: 7, type: "0x1BEF", color: "0x07D1" },
+    valorite: { gump: 12, gumpQuantity: 8, type: "0x1BEF", color: "0x0515" },
+    shadow: { gump: 13, gumpQuantity: 9, type: "0x1BEF", color: "0x0770" },
+    bloodRock: { gump: 14, gumpQuantity: 10, color: "0x04C2", type: "0x1BEF" },
+    blackRock: { gump: 15, gumpQuantity: 11, type: "0x1BEF", color: "0x0455" },
+    mytheril: { gump: 16, gumpQuantity: 12, type: "0x1BEF", color: "0x052D" },
+    ice: { gump: 17, gumpQuantity: 13, type: "0x1BEF", color: "0x0480" },
+    magma: { gump: 18, gumpQuantity: 14, type: "0x1BEF", color: "0x008A" },
+    celestial: { gump: 19, gumpQuantity: 15, type: "0x1BEF", color: "0x0481" },
+    bestial: { gump: 20, gumpQuantity: 16, type: "0x1BEF", color: "0x0497" },
+    vulcan: { gump: 21, gumpQuantity: 17, type: "0x1BEF", color: "0x0489" },
+    cromita: { gump: 22, gumpQuantity: 18, type: "0x1BEF", color: "0x0785" },
+    adamantium: { gump: 33, gumpQuantity: 29, type: "0x1BEF", color: "0x0811" },
+}
+
+const rocks = {
+    ambar: { gump: 1, gumpQuantity: 1, type: "0x0F25", color: "0x0000" },
+    diamante: { gump: 2, gumpQuantity: 2, type: "0x0F26", color: "0x0000" },
+    rubi: { gump: 3, gumpQuantity: 3, type: "0x0F13", color: "0x0000" },
+    citrino: { gump: 4, gumpQuantity: 4, type: "0x0F15", color: "0x0000" },
+    esmeralda: { gump: 5, gumpQuantity: 5, type: "0x0F10", color: "0x0000" },
+    safiraStar: { gump: 6, gumpQuantity: 6, type: "0x0F0F", color: "0x0000" },
+    safira: { gump: 7, gumpQuantity: 7, type: "0x0F11", color: "0x0000" },
+    ametista: { gump: 8, gumpQuantity: 8, type: "0x0F16", color: "0x0000" },
+    turmalina: { gump: 9, gumpQuantity: 9, type: "0x0F18", color: "0x0000" },
+    rochaVulcanica: { gump: 10, gumpQuantity: 10, type: "0x1779|0x4B4B", color: "0x0000" },
+    geodeShard: { gump: 11, gumpQuantity: 11, type: "0x4B48", color: "0x0000", isUnitary: true },
+}
+
+const fusions = {
+    adamantium: {
+        manufacturedItem: "0x1BEF", // Type do item gerado para mover pro baú
+        skillValue: 128, // Skill minima para executar esta fusão
+        batch: 5, // Isto faz gerar uma execução de 5x
+        items: [
+            {
+                ingot: ingots.ice,
+                quantity: 10,
+                move: function (quantityToTake) {
+                    // 40 para botão do gump de ingots
+                    getItemFromMaterialContainer(materialContainerID, quantityToTake, 40, ingots.ice);
+                },
+            },
+            {
+                ingot: rocks.geodeShard,
+                quantity: 10, // Este valor está multiplicado pela quantidade necessária para 10 execuções
+                move: function (quantityToTake) {
+                    // 43 para botão do gump de pedras
+                    getItemFromMaterialContainer(materialContainerID, quantityToTake, 43, rocks.geodeShard);
+                },
+            },
+        ],
+        executionSequenceGump: [ // Passos da execução do gump
+            {
+                menu: 'last',
+                name: "Lingotes",
+                select: 'lingote de Adamantium', // Texto no gump de escolha do ingot à ser criado
+            },
+        ]
+    },
+    darkGolden: {
+        manufacturedItem: "0x1BEF",
+        skillValue: 125,
+        batch: 10,
+        items: [
+            {
+                ingot: ingots.gold,
+                quantity: 100,
+                move: function (quantityToTake) {
+                    getItemFromMaterialContainer(materialContainerID, quantityToTake, 40, ingots.gold);
+                },
+            },
+            {
+                ingot: ingots.shadow,
+                quantity: 50,
+                move: function (quantityToTake) {
+                    getItemFromMaterialContainer(materialContainerID, quantityToTake, 40, ingots.shadow);
+                },
+            },
+        ],
+        executionSequenceGump: [
+            {
+                menu: 'last',
+                name: "Lingotes",
+                select: 'lingote de Dark Golden',
+            },
+        ]
+    },
+    deepSea: {
+        manufacturedItem: "0x1BEF",
+        skillValue: 125,
+        batch: 10,
+        items: [
+            {
+                ingot: ingots.gold,
+                quantity: 100,
+                move: function (quantityToTake) {
+                    getItemFromMaterialContainer(materialContainerID, quantityToTake, 40, ingots.gold);
+                },
+            },
+            {
+                ingot: ingots.verite,
+                quantity: 50,
+                move: function (quantityToTake) {
+                    getItemFromMaterialContainer(materialContainerID, quantityToTake, 40, ingots.verite);
+                },
+            },
+        ],
+        executionSequenceGump: [
+            {
+                menu: 'last',
+                name: "Lingotes",
+                select: 'lingote de Deep Sea',
+            },
+        ]
+    },
+    demise: {
+        manufacturedItem: "0x1BEF",
+        skillValue: 125,
+        batch: 10,
+        items: [
+            {
+                ingot: ingots.silver,
+                quantity: 100,
+                move: function (quantityToTake) {
+                    getItemFromMaterialContainer(materialContainerID, quantityToTake, 40, ingots.silver);
+                },
+            },
+            {
+                ingot: ingots.verite,
+                quantity: 50,
+                move: function (quantityToTake) {
+                    getItemFromMaterialContainer(materialContainerID, quantityToTake, 40, ingots.verite);
+                },
+            },
+        ],
+        executionSequenceGump: [
+            {
+                menu: 'last',
+                name: "Lingotes",
+                select: 'lingote de Demise',
+            },
+        ]
+    },
+    demoniac: {
+        manufacturedItem: "0x1BEF",
+        skillValue: 125,
+        batch: 10,
+        items: [
+            {
+                ingot: ingots.shadow,
+                quantity: 40,
+                move: function (quantityToTake) {
+                    getItemFromMaterialContainer(materialContainerID, quantityToTake, 40, ingots.shadow);
+                },
+            },
+            {
+                ingot: ingots.bestial,
+                quantity: 40,
+                move: function (quantityToTake) {
+                    getItemFromMaterialContainer(materialContainerID, quantityToTake, 40, ingots.bestial);
+                },
+            },
+        ],
+        executionSequenceGump: [
+            {
+                menu: 'last',
+                name: "Lingotes",
+                select: 'lingote de Demoniac',
+            },
+        ]
+    },
+    eclipse: {
+        manufacturedItem: "0x1BEF",
+        skillValue: 125,
+        batch: 10,
+        items: [
+            {
+                ingot: ingots.silver,
+                quantity: 100,
+                move: function (quantityToTake) {
+                    getItemFromMaterialContainer(materialContainerID, quantityToTake, 40, ingots.silver);
+                },
+            },
+            {
+                ingot: ingots.valorite,
+                quantity: 50,
+                move: function (quantityToTake) {
+                    getItemFromMaterialContainer(materialContainerID, quantityToTake, 40, ingots.valorite);
+                },
+            },
+        ],
+        executionSequenceGump: [
+            {
+                menu: 'last',
+                name: "Lingotes",
+                select: 'lingote de Eclipse',
+            },
+        ]
+    },
+    electra: {
+        manufacturedItem: "0x1BEF",
+        skillValue: 128,
+        batch: 10,
+        items: [
+            {
+                ingot: ingots.rose,
+                quantity: 80,
+                move: function (quantityToTake) {
+                    getItemFromMaterialContainer(materialContainerID, quantityToTake, 40, ingots.rose);
+                },
+            },
+            {
+                ingot: rocks.geodeShard,
+                quantity: 20,
+                move: function (quantityToTake) {
+                    getItemFromMaterialContainer(materialContainerID, quantityToTake, 43, rocks.geodeShard);
+                },
+            },
+        ],
+        executionSequenceGump: [
+            {
+                menu: 'last',
+                name: "Lingotes",
+                select: 'lingote de Electra',
+            },
+        ]
+    },
+    holy: {
+        manufacturedItem: "0x1BEF",
+        skillValue: 125,
+        batch: 10,
+        items: [
+            {
+                ingot: ingots.silver,
+                quantity: 50,
+                move: function (quantityToTake) {
+                    getItemFromMaterialContainer(materialContainerID, quantityToTake, 40, ingots.silver);
+                },
+            },
+            {
+                ingot: ingots.celestial,
+                quantity: 50,
+                move: function (quantityToTake) {
+                    getItemFromMaterialContainer(materialContainerID, quantityToTake, 40, ingots.celestial);
+                },
+            },
+        ],
+        executionSequenceGump: [
+            {
+                menu: 'last',
+                name: "Lingotes",
+                select: 'lingote de Holy',
+            },
+        ]
+    },
+    plague: {
+        manufacturedItem: "0x1BEF",
+        skillValue: 125,
+        batch: 10,
+        items: [
+            {
+                ingot: ingots.shadow,
+                quantity: 100,
+                move: function (quantityToTake) {
+                    getItemFromMaterialContainer(materialContainerID, quantityToTake, 40, ingots.shadow);
+                },
+            },
+            {
+                ingot: ingots.verite,
+                quantity: 50,
+                move: function (quantityToTake) {
+                    getItemFromMaterialContainer(materialContainerID, quantityToTake, 40, ingots.verite);
+                },
+            },
+        ],
+        executionSequenceGump: [
+            {
+                menu: 'last',
+                name: "Lingotes",
+                select: 'lingote de Plague',
+            },
+        ]
+    },
+    sunlight: {
+        manufacturedItem: "0x1BEF",
+        skillValue: 128,
+        batch: 5,
+        items: [
+            {
+                ingot: ingots.vulcan,
+                quantity: 10,
+                move: function (quantityToTake) {
+                    getItemFromMaterialContainer(materialContainerID, quantityToTake, 40, ingots.vulcan);
+                },
+            },
+            {
+                ingot: rocks.geodeShard,
+                quantity: 10,
+                move: function (quantityToTake) {
+                    getItemFromMaterialContainer(materialContainerID, quantityToTake, 43, rocks.geodeShard);
+                },
+            },
+        ],
+        executionSequenceGump: [
+            {
+                menu: 'last',
+                name: "Lingotes",
+                select: 'lingote de Sunlight',
+            },
+        ]
+    },
+    sunrise: {
+        manufacturedItem: "0x1BEF",
+        skillValue: 125,
+        batch: 10,
+        items: [
+            {
+                ingot: ingots.gold,
+                quantity: 100,
+                move: function (quantityToTake) {
+                    getItemFromMaterialContainer(materialContainerID, quantityToTake, 40, ingots.gold);
+                },
+            },
+            {
+                ingot: ingots.silver,
+                quantity: 50,
+                move: function (quantityToTake) {
+                    getItemFromMaterialContainer(materialContainerID, quantityToTake, 40, ingots.silver);
+                },
+            },
+        ],
+        executionSequenceGump: [
+            {
+                menu: 'last',
+                name: "Lingotes",
+                select: 'lingote de Sunrise',
+            },
+        ]
+    },
+    titan: {
+        manufacturedItem: "0x1BEF",
+        skillValue: 125,
+        batch: 10,
+        items: [
+            {
+                ingot: ingots.gold,
+                quantity: 100,
+                move: function (quantityToTake) {
+                    getItemFromMaterialContainer(materialContainerID, quantityToTake, 40, ingots.gold);
+                },
+            },
+            {
+                ingot: ingots.valorite,
+                quantity: 50,
+                move: function (quantityToTake) {
+                    getItemFromMaterialContainer(materialContainerID, quantityToTake, 40, ingots.valorite);
+                },
+            },
+        ],
+        executionSequenceGump: [
+            {
+                menu: 'last',
+                name: "Lingotes",
+                select: 'lingote de Titan',
+            },
+        ]
+    },
+};
+
+/**
+ * Execução principal
+ */
+function AutoStart() {
+    Orion.Exec('eat'); // comer quando com fome
+
+    while (true) {
+        Orion.CloseMenu("all");
+        Orion.CloseGump("generic");
+
+        const fusion = fusions[ingotType];
+
+        if (!checkFusionType(fusion)) {
+            Orion.CharPrint(self, '99', 'Tipo de fusão inexistente.');
+            Orion.PauseScript('all');
+        }
+
+        if (!checkSkillValue(fusion)) {
+            Orion.CharPrint(self, '99', 'Você não possui skill de Mining necessária. Valor requerido ' + fusionType.skillValue);
+            Orion.PauseScript('all');
+        }
+
+        makeFusionMaterial(fusion);
+    }
+}
+
+/**
+ * Obtém a quantidade de itens de um container
+ * @param {object} material 
+ * @param {*} containerReference 
+ * @returns 
+ */
+function getMaterialQuantity(material, containerReference) {
+    var quantity = 0;
+    const materials = Orion.FindTypeEx(material.type, material.color, containerReference);
+
+    if (materials && materials.length > 0) {
+        for (var index in materials) {
+            const totalMaterials = materials[index];
+            quantity += totalMaterials.Count();
+        }
+    }
+
+    return quantity;
+}
+
+/**
+ * 
+ * @param {string} containerOrigin 
+ * @param {int} maxQuantity 
+ * @param {int} menuID 
+ * @param {object} material 
+ * @returns object
+ */
+function getItemFromMaterialContainer(containerOrigin, maxQuantity, menuID, material) {
+    var quantity = getMaterialQuantity(material, backpack);
+
+    if (quantity >= maxQuantity) {
+        return quantity;
+    } else {
+        maxQuantity = maxQuantity - quantity
+        Orion.UseObject(containerOrigin);
+        Orion.Wait(250);
+
+        clickButtonGump('last', menuID);
+        Orion.Wait(250);
+
+        var availableQuantity = 0;
+        const textBtn = getGumpText('last', material.hasOwnProperty("gumpQuantity") ? material.gumpQuantity : material.gump);
+
+        if (textBtn != null && textBtn != '') {
+            var arrText = textBtn.split(' ');
+
+            if (arrText && arrText.length >= 2) {
+                availableQuantity = parseInt(arrText[arrText.length - 1]);
+            }
+        }
+
+        Orion.Print(null, "Quantidade: " + availableQuantity);
+
+        if (availableQuantity <= 0) {
+            return 0;
+        }
+
+        if (material.isUnitary) {
+            for (var i = 0; i < maxQuantity; i++) {
+                clickButtonGump('last', material.gump);
+                Orion.Wait(200);
+            }
+        } else {
+            clickButtonGump('last', material.gump);
+            Orion.Wait(200);
+        }
+
+        setGumpQuantity('last', maxQuantity);
+        Orion.Wait(200);
+
+        return getMaterialQuantity(material, backpack);
+    }
+
+}
+
+/**
+ * Clica no botão de um gump pelo seu id
+ * @param {string} menu 
+ * @param {int} id 
+ */
+function clickButtonGump(menu, id) {
+    gumpSaveIgnore(menu);
+
+    if (Orion.WaitForGump(1000)) {
+        var gump1 = Orion.GetGump(menu);
+
+        if (gump1 !== null) {
+            gump1.Select(Orion.CreateGumpHook(id));
+            Orion.Wait(500);
+        }
+    }
+}
+
+/**
+ * Adiciona a quantidade numérica a um gump
+ * @param {string} menu 
+ * @param {int} quantity 
+ */
+function setGumpQuantity(menu, quantity) {
+    gumpSaveIgnore(menu);
+
+    if (Orion.WaitForGump(1000)) {
+        var gump2 = Orion.GetGump(menu);
+        Orion.Wait(100);
+
+        if (gump2 !== null) {
+            var hook = Orion.CreateGumpHook(1)
+            Orion.Wait(100);
+
+            if (hook && quantity) {
+                hook.AddEntry(0, quantity);
+                gump2.Select(hook);
+                Orion.Wait(300);
+            }
+        }
+    }
+}
+
+/**
+ * Obtém o texto de um gump
+ * @param {string} menu 
+ * @param {int} id 
+ * @returns string | undefined
+ */
+function getGumpText(menu, id) {
+    gumpSaveIgnore(menu);
+
+    if (Orion.WaitForGump(1000)) {
+        var gump0 = Orion.GetGump(menu);
+        if (gump0 !== null) {
+            return gump0.Text(id);
+        }
+    }
+    return undefined
+}
+
+/**
+ * Ignora o gump de save do shard
+ * @param {string} menu 
+ */
+function gumpSaveIgnore(menu) {
+    var gumpText = "";
+    var gump0 = undefined;
+
+    if (Orion.WaitForGump(1000)) {
+        var gump0 = Orion.GetGump(menu);
+
+        if (gump0 !== null) {
+            gumpText = gump0.Text(0);
+        }
+    }
+
+    if (gumpText == "O shard esta sendo salvo...") {
+        Orion.Print("Encontrou um menu do world save, ignorando gump!");
+        gump0.Close()
+    }
+}
+
+/**
+ * Verifica se o valor da skill é compatível com o yipo de fusão
+ * @param {*} fusionType 
+ * @returns bool
+ */
+function checkSkillValue(fusionType) {
+    return Orion.SkillValue('Mining', 'real') >= fusionType.skillValue * 10;
+}
+
+/**
+ * Verifica se o tipo existe
+ * @param {*} fusionType 
+ * @returns bool
+ */
+function checkFusionType(fusionType) {
+    return fusionType != null && fusionType != undefined;
+}
+
+/**
+ * Realiza fusão por um tipo 
+ * @param {object} fusionType 
+ */
+function makeFusionMaterial(fusionType) {
+    const tongs = "0x0FBB";
+
+    for (var index = 0; index < fusionType.items.length; index++) {
+        const itemObj = fusionType.items[index];
+        var findItems0 = Orion.FindTypeEx(itemObj.type, itemObj.color, backpack, '');
+
+        if (findItems0.length == 0) {
+            itemObj.move(itemObj.quantity);
+        } else {
+            if (findItems0[0].Count() < itemObj.quantity) {
+                itemObj.move(itemObj.quantity - findItems0[0].Count());
+            }
+        }
+    }
+
+    var batch = 1;
+
+    if (fusionType.batch) {
+        batch = fusionType.batch;
+    }
+
+    for (var batchIndex = 0; batchIndex < batch; batchIndex++) {
+        Orion.UseType(tongs);
+        Orion.Wait(200);
+
+        for (var index = 0; index < fusionType.executionSequenceGump.length; index++) {
+            const sequencia = fusionType.executionSequenceGump[index];
+            Orion.Print(null, "Menu " + sequencia.name + " vai fazer " + sequencia.select);
+
+            gumpSaveIgnore("last");
+
+            if (Orion.WaitForMenu(1000)) {
+                var menu0 = Orion.GetMenu(sequencia.menu);
+                if (menu0 !== null) {
+                    if (menu0.Name() === sequencia.name) {
+                        menu0.Select(sequencia.select);
+                    }
+
+                    Orion.Wait(100);
+                }
+            }
+        }
+    }
+
+    const manufacturedItem = Orion.FindTypeEx(fusionType.manufacturedItem);
+    Orion.ClearJournal();
+
+    if (manufacturedItem && manufacturedItem.length > 0) {
+        for (var key in manufacturedItem) {
+            var item = manufacturedItem[key];
+
+            Orion.Print(null, "Guardando item fabricado");
+            Orion.MoveItem(item.Serial(), 0, materialContainerID);
+            Orion.Wait(600);
+        }
+    }
+
+}
+
+/**
+ * Faz o char comer quando estiver com fome
+ */
+function eat() {
+    const foods = [
+        '0x097B',
+        '0x160A',
+        '0x103B',
+        '0x0C79',
+    ];
+
+    while (true) {
+        if (Orion.InJournal('fome')) {
+            for (var i = 0; i < 5; i++) {
+                foods.forEach(function (food) {
+                    Orion.UseType(food);
+                    Orion.Wait(1000);
+                });
+            }
+
+            Orion.ClearJournal();
+        }
+    }
+}
