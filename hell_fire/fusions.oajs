@@ -411,7 +411,7 @@ function AutoStart() {
         }
 
         if (!checkSkillValue(fusion)) {
-            Orion.CharPrint(self, '99', 'Você não possui skill de Mining necessária. Valor requerido ' + fusionType.skillValue);
+            Orion.CharPrint(self, '99', 'Você não possui skill de Mining necessária. Valor requerido ' + fusion.skillValue);
             Orion.PauseScript('all');
         }
 
