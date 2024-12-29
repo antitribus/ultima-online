@@ -7,13 +7,14 @@
  * @shard: HellFire <hfshard.com.br>
  */
 
-const forgeID = "0x40031011"; // Adicione o id da sua forja pegando com "_info"
-const materialContainerID = '0x400B509D'; // Adicione o id do seu baú de materiais pegando com "_info"
+const forgeID = "0x40031011";
+const materialContainerID = '0x400B509D';
+const tongs = "0x0FBB";
 
 // Escreva aqui um dos nomes de minério que será fabricado
 // Possibilidades:
 // adamantium | darkGolden | deepSea | demise | demoniac | eclipse | electra | holy | plague | sunlight | sunrise | titan  
-const ingotType = 'titan';
+const ingotType = 'demoniac';
 
 const ingots = {
     iron: { gump: 1, gumpQuantity: 1, type: "0x1BEF", color: "0x0000" },
@@ -56,7 +57,7 @@ const fusions = {
     adamantium: {
         manufacturedItem: "0x1BEF", // Type do item gerado para mover pro baú
         skillValue: 128, // Skill minima para executar esta fusão
-        batch: 5, // Isto faz gerar uma execução de 5x
+        batch: 5, // Isto faz gerar uma execução de 10x
         items: [
             {
                 ingot: ingots.ice,
@@ -170,18 +171,18 @@ const fusions = {
     demoniac: {
         manufacturedItem: "0x1BEF",
         skillValue: 125,
-        batch: 10,
+        batch: 20,
         items: [
             {
                 ingot: ingots.shadow,
-                quantity: 40,
+                quantity: 80,
                 move: function (quantityToTake) {
                     getItemFromMaterialContainer(materialContainerID, quantityToTake, 40, ingots.shadow);
                 },
             },
             {
                 ingot: ingots.bestial,
-                quantity: 40,
+                quantity: 80,
                 move: function (quantityToTake) {
                     getItemFromMaterialContainer(materialContainerID, quantityToTake, 40, ingots.bestial);
                 },
@@ -406,13 +407,18 @@ function AutoStart() {
         const fusion = fusions[ingotType];
 
         if (!checkFusionType(fusion)) {
-            Orion.CharPrint(self, '99', 'Tipo de fusão inexistente.');
-            Orion.PauseScript('all');
+            Orion.CharPrint(self, 27, 'Tipo de fusão inexistente.');
+            break;
         }
 
         if (!checkSkillValue(fusion)) {
-            Orion.CharPrint(self, '99', 'Você não possui skill de Mining necessária. Valor requerido ' + fusion.skillValue);
-            Orion.PauseScript('all');
+            Orion.CharPrint(self, 27, 'Você não possui skill de Mining necessária. Valor requerido ' + fusion.skillValue);
+            break;
+        }
+
+        if (Orion.Count(tongs, 'any', backpack) <= 0) {
+            Orion.CharPrint(self, 27, 'É preciso ter a ferramenta tongs na sua backpack');
+            break;
         }
 
         makeFusionMaterial(fusion);
@@ -601,8 +607,6 @@ function checkFusionType(fusionType) {
  * @param {object} fusionType 
  */
 function makeFusionMaterial(fusionType) {
-    const tongs = "0x0FBB";
-
     for (var index = 0; index < fusionType.items.length; index++) {
         const itemObj = fusionType.items[index];
         var findItems0 = Orion.FindTypeEx(itemObj.type, itemObj.color, backpack, '');
