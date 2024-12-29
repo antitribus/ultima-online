@@ -408,16 +408,19 @@ function AutoStart() {
 
         if (!checkFusionType(fusion)) {
             Orion.CharPrint(self, 27, 'Tipo de fusão inexistente.');
+            Orion.Terminate('eat')
             break;
         }
 
         if (!checkSkillValue(fusion)) {
             Orion.CharPrint(self, 27, 'Você não possui skill de Mining necessária. Valor requerido ' + fusion.skillValue);
+            Orion.Terminate('eat')
             break;
         }
 
         if (Orion.Count(tongs, 'any', backpack) <= 0) {
             Orion.CharPrint(self, 27, 'É preciso ter a ferramenta tongs na sua backpack');
+            Orion.Terminate('eat')
             break;
         }
 
