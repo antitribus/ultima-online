@@ -1,0 +1,105 @@
+const container = '0x400832A8'; // coloque aqui o ID do bau onde estão os lingotes no seu banco
+const ingots = '0x1BEF';
+const comida = '0x097B'; // coloque aqui o tipo de comida
+
+function pegarIngots() {
+	Orion.UseObject(container);
+	moveItems(container, backpack, ingots, '0x0000', 120);
+	Orion.Wait(300);
+}
+
+function andarBanco(){
+	Orion.WalkTo(2497,562,0);
+	Orion.Wait(300);
+}
+
+function abrirBanco() {
+	Orion.Say('banker bank');
+	Orion.Wait(300);
+}
+
+function andarForja() {
+	Orion.WalkTo(2468,559,0);
+	Orion.Wait(300);
+}
+
+function andarVendedor() {
+	Orion.WalkTo(2470,566,0);
+	Orion.Wait(300);
+}
+
+function merendar(){
+	Orion.UseType(comida);
+	Orion.Wait(300);
+}
+
+function vender() {
+	Orion.Sell('BS');
+	Orion.Wait(300);
+	Orion.Sell('BS');
+	Orion.Wait(300);
+}
+
+function guardarDinheiro() {
+	moveItems(backpack, container ,'0x0EED', '0x0000', 99999999);
+	Orion.Wait(300);
+}
+
+function moveItems(containerOrigin, containerDestiny, graphic, color, quantity) {
+    Orion.UseObject(containerOrigin);
+    Orion.Wait(200);
+    Orion.DragItemType(graphic, color, containerOrigin, quantity);
+    Orion.Wait(200);
+    Orion.DropDraggedItem(containerDestiny);
+}
+
+function fazerFaca() {
+	Orion.UseType(ingots);
+	Orion.Wait(300);
+	
+	 if (Orion.WaitForMenu(1000)) {
+          var menu0 = Orion.GetMenu('last');
+          if (menu0 !== null) {
+              if (menu0.Name() === 'Ferreiro') {
+                  menu0.Select('Weapons');
+              }
+
+              Orion.Wait(100);
+          }
+      }
+      
+      Orion.Wait(300);
+      
+       var menu1 = Orion.GetMenu('last');
+       
+       if (menu1 !== null) {
+           if (menu1.Name() === 'Swords & Blades') {
+               menu1.Select('dagger (4 lingotes de ferro)');
+           }
+
+           Orion.Wait(100);
+       }
+      
+      Orion.Wait(8000);
+}
+
+function Autostart() {
+	while(true) {
+		merendar();
+		
+		const pesado = Player.Weight() >= ( Player.MaxWeight() - 50 );
+		
+		if(pesado || Orion.Count(ingots, '0x0000', backpack) < 4) {
+			andarVendedor();
+			vender();
+			andarBanco();
+			abrirBanco();
+			guardarDinheiro();
+			pegarIngots();
+			andarForja();
+		} else {
+			andarForja();
+			fazerFaca();
+		}
+	}
+}
