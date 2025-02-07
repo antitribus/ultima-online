@@ -1,0 +1,964 @@
+/**
+ * Macro para criação de platemails
+ * @author: Antitribus
+ * @updated_at: 2025-02-06
+ * @shard: HellFire <hfshard.com.br>
+ */
+
+// Área de variáveis para serem alteradas
+// ----------------------------------------------------------------------------------------------
+
+// Bau de Materiais onde estão os lingotes
+const materialContainerID = '0x4002A211';
+
+// Armário PVP para guardar os itens feitos
+const pvpContainerID = '0x4004D3A7';
+
+// Container para guardar itens com luck
+const luckContainerID = '0x400E7457';
+
+// Usar um dos nomes de lingotes para fabricação da platemail
+// Possibilidades: iron | copper | gold | rose | agapite | prata | verite | valorite | shadow | bloodRock | blackRock | mytheril
+ice | magma | celestial | bestial | vulcan | cromita | clover | sunset | sunrise | darkGolden | deepSea | titan
+demise | eclipse | plague | adamantium | demoniac | holy | sunLight | electra
+const selectedIngot = 'demoniac';
+
+// ----------------------------------------------------------------------------------------------
+
+const hammer = "0x13E3";
+const forgeType = "0x0FB1";
+
+const platemailParts = {
+    helm: {
+        key: 'helm',
+        quantity: 15,
+        type: '0x1412',
+        active: true
+    },
+    gorget: {
+        key: 'gorget',
+        quantity: 10,
+        type: '0x1413',
+        active: true
+    },
+    gloves: {
+        key: 'gloves',
+        quantity: 12,
+        type: '0x1414',
+        active: true
+    },
+    arms: {
+        key: 'arms',
+        quantity: 18,
+        type: '0x1410',
+        active: true
+    },
+    legs: {
+        key: 'legs',
+        quantity: 20,
+        type: '0x1411',
+        active: true
+    },
+    chest: {
+        key: 'chest',
+        quantity: 25,
+        type: '0x1415',
+        active: true
+    },
+    shield: {
+        key: 'shield',
+        quantity: 18,
+        type: '0x1B76',
+        active: true
+    },
+    shieldOrder: {
+        key: 'shield order',
+        quantity: 18,
+        type: '0x1BC4',
+        active: false
+    },
+    shieldChaos: {
+        key: 'shield chaos',
+        quantity: 18,
+        type: '0x1BC3',
+        active: false
+    }
+};
+
+const platemailGumps = {
+    iron: {
+        initial: { menu: 'Ferreiro', select: 'Armor' },
+        armor: { menu: 'Iron Armor & Shields', select: 'Iron Armor & Shields' },
+        parts: {
+            menu: 'Iron Armor & Shields',
+            helm: 'plate helm (15 lingotes de ferro)',
+            gorget: 'platemail gorget (10 lingotes de ferro)',
+            gloves: 'platemail gloves (12 lingotes de ferro)',
+            arms: 'platemail arms (18 lingotes de ferro)',
+            legs: 'platemail legs (20 lingotes de ferro)',
+            chest: 'platemail (25 lingotes de ferro)',
+            shield: 'heater shield (18 lingotes de ferro)',
+        },
+    },
+    copper: {
+        initial: { menu: 'Ferreiro', select: 'Armor' },
+        armor: { menu: 'Copper Armor & Shields', select: 'Copper Armor & Shields' },
+        parts: {
+            menu: 'Dull Copper Armor & Shields',
+            helm: 'Copper Plate Helm (15 lingotes de copper)',
+            gorget: 'Copper Platemail Gorget (10 lingotes de copper)',
+            gloves: 'Copper Platemail Gauntlets (12 lingotes de copper)',
+            arms: 'Copper Platemail Arms (18 lingotes de copper)',
+            legs: 'Copper Platemail Legs (20 lingotes de copper)',
+            chest: 'Copper Platemail (25 lingotes de copper)',
+            shield: 'Copper Heater Shield (18 lingotes de copper)',
+        },
+    },
+    gold: {
+        initial: { menu: 'Ferreiro', select: 'Armor' },
+        armor: { menu: 'Golden Armor & Shields', select: 'golden Armor & Shields' },
+        parts: {
+            menu: 'Golden Armor & Shields',
+            helm: 'Golden Plate Helm (15 lingotes de ouro)',
+            gorget: 'Golden Platemail Gorget (10 lingotes de ouro)',
+            gloves: 'Golden Platemail Gauntlets (12 lingotes de ouro)',
+            arms: 'Golden Platemail Arms (18 lingotes de ouro)',
+            legs: 'Golden Platemail Legs (20 lingotes de ouro)',
+            chest: 'Golden Platemail (25 lingotes de ouro)',
+            shield: 'Golden Heater Shield (18 lingotes de ouro)',
+        },
+    },
+    rose: {
+        initial: { menu: 'Ferreiro', select: 'Armor' },
+        armor: { menu: 'Rose Armor & Shields', select: 'rose Armor & Shields' },
+        parts: {
+            menu: 'Rose Armor & Shields',
+            helm: 'Rose Plate Helm (15 lingotes de Rose)',
+            gorget: 'Rose Platemail Gorget (10 lingotes de Rose)',
+            gloves: 'Rose Platemail Gauntlets (12 lingotes de Rose)',
+            arms: 'Rose Platemail Arms (18 lingotes de Rose)',
+            legs: 'Rose Platemail Legs (20 lingotes de Rose)',
+            chest: 'Rose Platemail (25 lingotes de Rose)',
+            shield: 'Rose Heater Shield (18 lingotes de Rose)',
+        },
+    },
+    agapite: {
+        initial: { menu: 'Ferreiro', select: 'Armor' },
+        armor: { menu: 'Agapite Armor & Shields', select: 'agapite Armor & Shields' },
+        parts: {
+            menu: 'Agapite Armor & Shields',
+            helm: 'Agapite Plate Helm (15 lingotes de Agapite)',
+            gorget: 'Agapite Platemail Gorget (10 lingotes de Agapite)',
+            gloves: 'Agapite Platemail Gauntlets (12 lingotes de Agapite)',
+            arms: 'Agapite Platemail Arms (18 lingotes de Agapite)',
+            legs: 'Agapite Platemail Legs (20 lingotes de Agapite)',
+            chest: 'Agapite Platemail (25 lingotes de Agapite)',
+            shield: 'Agapite Heater Shield (18 lingotes de Agapite)',
+        },
+    },
+    prata: {
+        initial: { menu: 'Ferreiro', select: 'Armor' },
+        armor: { menu: 'Silver Armor & Shields', select: 'silver Armor & Shields' },
+        parts: {
+            menu: 'silver Armor & Shields',
+            helm: 'Silver Plate Helm (15 lingotes de prata)',
+            gorget: 'Silver Platemail Gorget (10 lingotes de prata)',
+            gloves: 'Silver Platemail Gauntlets (12 lingotes de prata)',
+            arms: 'Silver Platemail Arms (18 lingotes de prata)',
+            legs: 'Silver Platemail Legs (20 lingotes de prata)',
+            chest: 'Silver Platemail (25 lingotes de prata)',
+            shield: 'Silver Heater Shield (18 lingotes de prata)',
+        },
+    },
+    verite: {
+        initial: { menu: 'Ferreiro', select: 'Armor' },
+        armor: { menu: 'Verite Armor & Shields', select: 'verite Armor & Shields' },
+        parts: {
+            menu: 'verite Armor & Shields',
+            helm: 'Verite Plate Helm (15 lingotes de Verite)',
+            gorget: 'Verite Platemail Gorget (10 lingotes de Verite)',
+            gloves: 'Verite Platemail Gauntlets (12 lingotes de Verite)',
+            arms: 'Verite Platemail Arms (18 lingotes de Verite)',
+            legs: 'Verite Platemail Legs (20 lingotes de Verite)',
+            chest: 'Verite Platemail (25 lingotes de Verite)',
+            shield: 'Verite Heater Shield (18 lingotes de Verite)',
+        },
+    },
+    valorite: {
+        initial: { menu: 'Ferreiro', select: 'Armor' },
+        armor: { menu: 'Valorite Armor & Shields', select: 'valorite Armor & Shields' },
+        parts: {
+            menu: 'Valorite Armor & Shields',
+            helm: 'Valorite Plate Helm (15 lingotes de Valorite)',
+            gorget: 'Valorite Platemail Gorget (10 lingotes de Valorite)',
+            gloves: 'Valorite Platemail Gauntlets (12 lingotes de Valorite)',
+            arms: 'Valorite Platemail Arms (18 lingotes de Valorite)',
+            legs: 'Valorite Platemail Legs (20 lingotes de Valorite)',
+            chest: 'Valorite Platemail (25 lingotes de Valorite)',
+            shield: 'Valorite Heater Shield (18 lingotes de Valorite)',
+        },
+    },
+    shadow: {
+        initial: { menu: 'Ferreiro', select: 'Armor' },
+        armor: { menu: 'Shadow Armor & Shields', select: 'shadow Armor & Shields' },
+        parts: {
+            menu: 'Shadow Armor & Shields',
+            helm: 'Shadow Plate Helm (15 lingotes de Shadow)',
+            gorget: 'Shadow Platemail Gorget (10 lingotes de Shadow)',
+            gloves: 'Shadow Platemail Gauntlets (12 lingotes de Shadow)',
+            arms: 'Shadow Platemail Arms (18 lingotes de Shadow)',
+            legs: 'Shadow Platemail Legs (20 lingotes de Shadow)',
+            chest: 'Shadow Platemail (25 lingotes de Shadow)',
+            shield: 'Shadow Heater Shield (18 lingotes de Shadow)',
+        },
+    },
+    bloodRock: {
+        initial: { menu: 'Ferreiro', select: 'Armor' },
+        armor: { menu: 'Blood Rock Armor & Shields', select: 'bloodrock Armor & Shields' },
+        parts: {
+            menu: 'Blood Rock Armor & Shields',
+            helm: 'Blood Rock Plate Helm (15 lingotes de Blood Rock)',
+            gorget: 'Blood Rock Platemail Gorget (10 lingotes de Blood Rock)',
+            gloves: 'Blood Rock Platemail Gauntlets (12 lingotes de Blood Rock)',
+            arms: 'Blood Rock Platemail Arms (18 lingotes de Blood Rock)',
+            legs: 'Blood Rock Platemail Legs (20 lingotes de Blood Rock)',
+            chest: 'Blood Rock Platemail (25 lingotes de Blood Rock)',
+            shield: 'Blood Rock Heater Shield (18 lingotes de Blood Rock)',
+        },
+    },
+    blackRock: {
+        initial: { menu: 'Ferreiro', select: 'Armor' },
+        armor: { menu: 'Black Rock Armor & Shields', select: 'blackrock Armor & Shields' },
+        parts: {
+            menu: 'Blood Rock Armor & Shields',
+            helm: 'Black Rock Plate Helm (15 lingotes de Black Rock)',
+            gorget: 'Black Rock Platemail Gorget (10 lingotes de Black Rock)',
+            gloves: 'Black Rock Platemail Gauntlets (12 lingotes de Black Rock)',
+            arms: 'Black Rock Platemail Arms (18 lingotes de Black Rock)',
+            legs: 'Black Rock Platemail Legs (20 lingotes de Black Rock)',
+            chest: 'Black Rock Platemail (25 lingotes de Black Rock)',
+            shield: 'Black Rock Heater Shield (18 lingotes de Black Rock)',
+        },
+    },
+    mytheril: {
+        initial: { menu: 'Ferreiro', select: 'Armor' },
+        armor: { menu: 'Mytheril Armor & Shields', select: 'mytheril Armor & Shields' },
+        parts: {
+            menu: 'Mytheril Armor & Shields',
+            helm: 'Mytheril Plate Helm (15 lingotes de Mytheril)',
+            gorget: 'Mytheril Platemail Gorget (10 lingotes de Mytheril)',
+            gloves: 'Mytheril Platemail Gauntlets (12 lingotes de Mytheril)',
+            arms: 'Mytheril Platemail Arms (18 lingotes de Mytheril)',
+            legs: 'Mytheril Platemail Legs (20 lingotes de Mytheril)',
+            chest: 'Mytheril Platemail (25 lingotes de Mytheril)',
+            shield: 'Mytheril Heater Shield (18 lingotes de Mytheril)',
+        },
+    },
+    ice: {
+        initial: { menu: 'Ferreiro', select: 'Ice' },
+        specific: { menu: 'Ice', select: 'Armaduras e Escudos' },
+        armor: { menu: 'Armor & Shields', select: 'ice Armor & Shields' },
+        parts: {
+            menu: 'Armor & Shields',
+            helm: 'Ice Plate Helm (15 lingotes de Ice)',
+            gorget: 'Ice Platemail Gorget (10 lingotes de Ice)',
+            gloves: 'Ice Platemail Gauntlets (12 lingotes de Ice)',
+            arms: 'Ice Platemail Arms (18 lingotes de Ice)',
+            legs: 'Ice Platemail Legs (20 lingotes de Ice)',
+            chest: 'Ice Platemail (25 lingotes de Ice)',
+            shield: 'Ice Heater Shield (18 lingotes de Ice)',
+        },
+    },
+    magma: {
+        initial: { menu: 'Ferreiro', select: 'Armor' },
+        armor: { menu: 'Magma Armor & Shields', select: 'magma Armor & Shields' },
+        parts: {
+            menu: 'Magma Armor & Shields',
+            helm: 'Magma Plate Helm (15 lingotes de Magma)',
+            gorget: 'Magma Platemail Gorget (10 lingotes de Magma)',
+            gloves: 'Magma Platemail Gauntlets (12 lingotes de Magma)',
+            arms: 'Magma Platemail Arms (18 lingotes de Magma)',
+            legs: 'Magma Platemail Legs (20 lingotes de Magma)',
+            chest: 'Magma Platemail (25 lingotes de Magma)',
+            shield: 'Magma Heater Shield (18 lingotes de Magma)',
+        },
+    },
+    celestial: {
+        initial: { menu: 'Ferreiro', select: 'Armor' },
+        armor: { menu: 'Celestial Armor & Shields', select: 'celestial Armor & Shields' },
+        parts: {
+            menu: 'Celestial Armor & Shields',
+            helm: 'Celestial Plate Helm (15 lingotes de Celestial)',
+            gorget: 'Celestial Platemail Gorget (10 lingotes de Celestial)',
+            gloves: 'Celestial Platemail Gauntlets (12 lingotes de Celestial)',
+            arms: 'Celestial Platemail Arms (18 lingotes de Celestial)',
+            legs: 'Celestial Platemail Legs (20 lingotes de Celestial)',
+            chest: 'Celestial Platemail (25 lingotes de Celestial)',
+            shield: 'Celestial Heater Shield (18 lingotes de Celestial)',
+        },
+    },
+    bestial: {
+        initial: { menu: 'Ferreiro', select: 'Armor' },
+        armor: { menu: 'Bestial Armor & Shields', select: 'bestial Armor & Shields' },
+        parts: {
+            menu: 'Bestial Armor & Shields',
+            helm: 'Bestial Plate Helm (15 lingotes de Bestial)',
+            gorget: 'Bestial Platemail Gorget (10 lingotes de Bestial)',
+            gloves: 'Bestial Platemail Gauntlets (12 lingotes de Bestial)',
+            arms: 'Bestial Platemail Arms (18 lingotes de Bestial)',
+            legs: 'Bestial Platemail Legs (20 lingotes de Bestial)',
+            chest: 'Bestial Platemail (25 lingotes de Bestial)',
+            shield: 'Bestial Heater Shield (18 lingotes de Bestial)',
+        },
+    },
+    vulcan: {
+        initial: { menu: 'Ferreiro', select: 'Vulcan' },
+        specific: { menu: 'Vulcan', select: 'Armaduras e Escudos' },
+        armor: { menu: 'Armor & Shields', select: 'vulcan Armor & Shields' },
+        parts: {
+            menu: 'Armor & Shields',
+            helm: 'Vulcan Plate Helm (15 lingotes de Vulcan)',
+            gorget: 'Vulcan Platemail Gorget (10 lingotes de Vulcan)',
+            gloves: 'Vulcan Platemail Gauntlets (12 lingotes de Vulcan)',
+            arms: 'Vulcan Platemail Arms (18 lingotes de Vulcan)',
+            legs: 'Vulcan Platemail Legs (20 lingotes de Vulcan)',
+            chest: 'Vulcan Platemail (25 lingotes de Vulcan)',
+            shield: 'Vulcan Heater Shield (18 lingotes de Vulcan)',
+        },
+    },
+    cromita: {
+        initial: { menu: 'Ferreiro', select: 'Cromita' },
+        specific: { menu: 'Cromita', select: 'Armaduras e Escudos' },
+        armor: { menu: 'Armor & Shields', select: 'cromita Armor & Shields' },
+        parts: {
+            menu: 'Armor & Shields',
+            helm: 'Cromita Plate Helm (15 lingotes de Cromita)',
+            gorget: 'Cromita Platemail Gorget (10 lingotes de Cromita)',
+            gloves: 'Cromita Platemail Gauntlets (12 lingotes de Cromita)',
+            arms: 'Cromita Platemail Arms (18 lingotes de Cromita)',
+            legs: 'Cromita Platemail Legs (20 lingotes de Cromita)',
+            chest: 'Cromita Platemail (25 lingotes de Cromita)',
+            shield: 'Cromita Heater Shield (18 lingotes de Cromita)',
+        },
+    },
+    clover: {
+        initial: { menu: 'Ferreiro', select: 'Clover' },
+        specific: { menu: 'Clover', select: 'Armaduras e Escudos' },
+        armor: { menu: 'Armor & Shields', select: 'clover Armor & Shields' },
+        parts: {
+            menu: 'Armor & Shields',
+            helm: 'Clover Plate Helm (15 lingotes de Clover)',
+            gorget: 'Clover Platemail Gorget (10 lingotes de Clover)',
+            gloves: 'Clover Platemail Gauntlets (12 lingotes de Clover)',
+            arms: 'Clover Platemail Arms (18 lingotes de Clover)',
+            legs: 'Clover Platemail Legs (20 lingotes de Clover)',
+            chest: 'Clover Platemail (25 lingotes de Clover)',
+            shield: 'Clover Heater Shield (18 lingotes de Clover)',
+        },
+    },
+    sunset: {
+        initial: { menu: 'Ferreiro', select: 'Sunset' },
+        specific: { menu: 'Sunset', select: 'Armaduras e Escudos' },
+        armor: { menu: 'Armor & Shields', select: 'sunset Armor & Shields' },
+        parts: {
+            menu: 'Armor & Shields',
+            helm: 'Sunset Plate Helm (15 lingotes de Sunset)',
+            gorget: 'Sunset Platemail Gorget (10 lingotes de Sunset)',
+            gloves: 'Sunset Platemail Gauntlets (12 lingotes de Sunset)',
+            arms: 'Sunset Platemail Arms (18 lingotes de Sunset)',
+            legs: 'Sunset Platemail Legs (20 lingotes de Sunset)',
+            chest: 'Sunset Platemail (25 lingotes de Sunset)',
+            shield: 'Sunset Heater Shield (18 lingotes de Sunset)',
+        },
+    },
+    sunrise: {
+        initial: { menu: 'Ferreiro', select: 'Sunrise' },
+        specific: { menu: 'Sunrise', select: 'Armaduras e Escudos' },
+        armor: { menu: 'Armor & Shields', select: 'sunrise Armor & Shields' },
+        parts: {
+            menu: 'Armor & Shields',
+            helm: 'Sunrise Plate Helm (15 lingotes de Sunrise)',
+            gorget: 'Sunrise Platemail Gorget (10 lingotes de Sunrise)',
+            gloves: 'Sunrise Platemail Gauntlets (12 lingotes de Sunrise)',
+            arms: 'Sunrise Platemail Arms (18 lingotes de Sunrise)',
+            legs: 'Sunrise Platemail Legs (20 lingotes de Sunrise)',
+            chest: 'Sunrise Platemail (25 lingotes de Sunrise)',
+            shield: 'Sunrise Heater Shield (18 lingotes de Sunrise)',
+        },
+    },
+    darkGolden: {
+        initial: { menu: 'Ferreiro', select: 'DarkGolden' },
+        specific: { menu: 'DarkGolden', select: 'Armaduras e Escudos' },
+        armor: { menu: 'Armor & Shields', select: 'darkGolden Armor & Shields' },
+        parts: {
+            menu: 'Armor & Shields',
+            helm: 'DarkGolden Plate Helm (15 lingotes de Dark Golden)',
+            gorget: 'DarkGolden Platemail Gorget (10 lingotes de Dark Golden)',
+            gloves: 'DarkGolden Platemail Gauntlets (12 lingotes de Dark Golden)',
+            arms: 'DarkGolden Platemail Arms (18 lingotes de Dark Golden)',
+            legs: 'DarkGolden Platemail Legs (20 lingotes de Dark Golden)',
+            chest: 'DarkGolden Platemail (25 lingotes de Dark Golden)',
+            shield: 'DarkGolden Heater Shield (18 lingotes de Dark Golden)',
+        },
+    },
+    deepSea: {
+        initial: { menu: 'Ferreiro', select: 'DeepSea' },
+        specific: { menu: 'DeepSea', select: 'Armaduras e Escudos' },
+        armor: { menu: 'Armor & Shields', select: 'DeepSea Armor & Shields' },
+        parts: {
+            menu: 'Armor & Shields',
+            helm: 'DeepSea Plate Helm (15 lingotes de Deep Sea)',
+            gorget: 'DeepSea Platemail Gorget (10 lingotes de Deep Sea)',
+            gloves: 'DeepSea Platemail Gauntlets (12 lingotes de Deep Sea)',
+            arms: 'DeepSea Platemail Arms (18 lingotes de Deep Sea)',
+            legs: 'DeepSea Platemail Legs (20 lingotes de Deep Sea)',
+            chest: 'DeepSea Platemail (25 lingotes de Deep Sea)',
+            shield: 'DeepSea Heater Shield (18 lingotes de Deep Sea)',
+        },
+    },
+    titan: {
+        initial: { menu: 'Ferreiro', select: 'Titan' },
+        specific: { menu: 'Titan', select: 'Armaduras e Escudos' },
+        armor: { menu: 'Armor & Shields', select: 'titan Armor & Shields' },
+        parts: {
+            menu: 'Armor & Shields',
+            helm: 'Titan Plate Helm (15 lingotes de Titan)',
+            gorget: 'Titan Platemail Gorget (10 lingotes de Titan)',
+            gloves: 'Titan Platemail Gauntlets (12 lingotes de Titan)',
+            arms: 'Titan Platemail Arms (18 lingotes de Titan)',
+            legs: 'Titan Platemail Legs (20 lingotes de Titan)',
+            chest: 'Titan Platemail (25 lingotes de Titan)',
+            shield: 'Titan Heater Shield (18 lingotes de Titan)',
+        },
+    },
+    demise: {
+        initial: { menu: 'Ferreiro', select: 'Demise' },
+        specific: { menu: 'Demise', select: 'Armaduras e Escudos' },
+        armor: { menu: 'Armor & Shields', select: 'demise Armor & Shields' },
+        parts: {
+            menu: 'Armor & Shields',
+            helm: 'Demise Plate Helm (15 lingotes de Demise)',
+            gorget: 'Demise Platemail Gorget (10 lingotes de Demise)',
+            gloves: 'Demise Platemail Gauntlets (12 lingotes de Demise)',
+            arms: 'Demise Platemail Arms (18 lingotes de Demise)',
+            legs: 'Demise Platemail Legs (20 lingotes de Demise)',
+            chest: 'Demise Platemail (25 lingotes de Demise)',
+            shield: 'Demise Heater Shield (18 lingotes de Demise)',
+        },
+    },
+    eclipse: {
+        initial: { menu: 'Ferreiro', select: 'Eclipse' },
+        specific: { menu: 'Eclipse', select: 'Armaduras e Escudos' },
+        armor: { menu: 'Armor & Shields', select: 'eclipse Armor & Shields' },
+        parts: {
+            menu: 'Armor & Shields',
+            helm: 'Eclipse Plate Helm (15 lingotes de Eclipse)',
+            gorget: 'Eclipse Platemail Gorget (10 lingotes de Eclipse)',
+            gloves: 'Eclipse Platemail Gauntlets (12 lingotes de Eclipse)',
+            arms: 'Eclipse Platemail Arms (18 lingotes de Eclipse)',
+            legs: 'Eclipse Platemail Legs (20 lingotes de Eclipse)',
+            chest: 'Eclipse Platemail (25 lingotes de Eclipse)',
+            shield: 'Eclipse Heater Shield (18 lingotes de Eclipse)',
+        },
+    },
+    plague: {
+        initial: { menu: 'Ferreiro', select: 'Plague' },
+        specific: { menu: 'Plague', select: 'Armaduras e Escudos' },
+        armor: { menu: 'Armor & Shields', select: 'plague Armor & Shields' },
+        parts: {
+            menu: 'Armor & Shields',
+            helm: 'Plague Plate Helm (15 lingotes de Plague)',
+            gorget: 'Plague Platemail Gorget (10 lingotes de Plague)',
+            gloves: 'Plague Platemail Gauntlets (12 lingotes de Plague)',
+            arms: 'Plague Platemail Arms (18 lingotes de Plague)',
+            legs: 'Plague Platemail Legs (20 lingotes de Plague)',
+            chest: 'Plague Platemail (25 lingotes de Plague)',
+            shield: 'Plague Heater Shield (18 lingotes de Plague)',
+        },
+    },
+    adamantium: {
+        initial: { menu: 'Ferreiro', select: 'Adamantium' },
+        specific: { menu: 'Adamantium', select: 'Armaduras e Escudos' },
+        armor: { menu: 'Armor & Shields', select: 'adamantium Armor & Shields' },
+        parts: {
+            menu: 'Armor & Shields',
+            helm: 'Adamantium Plate Helm (15 lingotes de Adamantium)',
+            gorget: 'Adamantium Platemail Gorget (10 lingotes de Adamantium)',
+            gloves: 'Adamantium Platemail Gauntlets (12 lingotes de Adamantium)',
+            arms: 'Adamantium Platemail Arms (18 lingotes de Adamantium)',
+            legs: 'Adamantium Platemail Legs (20 lingotes de Adamantium)',
+            chest: 'Adamantium Platemail (25 lingotes de Adamantium)',
+            shield: 'Adamantium Heater Shield (18 lingotes de Adamantium)',
+        },
+    },
+    demoniac: {
+        initial: { menu: 'Ferreiro', select: 'Demoniac' },
+        specific: { menu: 'Demoniac', select: 'Armaduras e Escudos' },
+        armor: { menu: 'Armor & Shields', select: 'demoniac Armor & Shields' },
+        parts: {
+            menu: 'Armor & Shields',
+            helm: 'Demoniac Plate Helm (15 lingotes de Demoniac)',
+            gorget: 'Demoniac Platemail Gorget (10 lingotes de Demoniac)',
+            gloves: 'Demoniac Platemail Gauntlets (12 lingotes de Demoniac)',
+            arms: 'Demoniac Platemail Arms (18 lingotes de Demoniac)',
+            legs: 'Demoniac Platemail Legs (20 lingotes de Demoniac)',
+            chest: 'Demoniac Platemail (25 lingotes de Demoniac)',
+            shield: 'Demoniac Heater Shield (18 lingotes de Demoniac)',
+        },
+    },
+    holy: {
+        initial: { menu: 'Ferreiro', select: 'Holy' },
+        specific: { menu: 'Holy', select: 'Armaduras e Escudos' },
+        armor: { menu: 'Armor & Shields', select: 'holy Armor & Shields' },
+        parts: {
+            menu: 'Armor & Shields',
+            helm: 'Holy Plate Helm (15 lingotes de Holy)',
+            gorget: 'Holy Platemail Gorget (10 lingotes de Holy)',
+            gloves: 'Holy Platemail Gauntlets (12 lingotes de Holy)',
+            arms: 'Holy Platemail Arms (18 lingotes de Holy)',
+            legs: 'Holy Platemail Legs (20 lingotes de Holy)',
+            chest: 'Holy Platemail (25 lingotes de Holy)',
+            shield: 'Holy Heater Shield (18 lingotes de Holy)',
+        },
+    },
+    sunLight: {
+        initial: { menu: 'Ferreiro', select: 'SunLight' },
+        specific: { menu: 'SunLight', select: 'Armaduras e Escudos' },
+        armor: { menu: 'Armor & Shields', select: 'SunLight Armor & Shields' },
+        parts: {
+            menu: 'Armor & Shields',
+            helm: 'SunLight Plate Helm (15 lingotes de Sun Light)',
+            gorget: 'SunLight Platemail Gorget (10 lingotes de Sun Light)',
+            gloves: 'SunLight Platemail Gauntlets (12 lingotes de Sun Light)',
+            arms: 'SunLight Platemail Arms (18 lingotes de Sun Light)',
+            legs: 'SunLight Platemail Legs (20 lingotes de Sun Light)',
+            chest: 'SunLight Platemail (25 lingotes de Sun Light)',
+            shield: 'SunLight Heater Shield (18 lingotes de Sun Light)',
+        },
+    },
+    electra: {
+        initial: { menu: 'Ferreiro', select: 'Electra' },
+        specific: { menu: 'Electra', select: 'Armaduras e Escudos' },
+        armor: { menu: 'Armor & Shields', select: 'electra Armor & Shields' },
+        parts: {
+            menu: 'Armor & Shields',
+            helm: 'Electra Plate Helm (15 lingotes de Electra)',
+            gorget: 'Electra Platemail Gorget (10 lingotes de Electra)',
+            gloves: 'Electra Platemail Gauntlets (12 lingotes de Electra)',
+            arms: 'Electra Platemail Arms (18 lingotes de Electra)',
+            legs: 'Electra Platemail Legs (20 lingotes de Electra)',
+            chest: 'Electra Platemail (25 lingotes de Electra)',
+            shield: 'Electra Heater Shield (18 lingotes de Electra)',
+        },
+    },
+}
+
+const ingots = {
+    iron: { gumpId: 1, name: 'iron', skillValue: 50, strValue: 40, type: "0x1BEF", color: "0x0000" },
+    copper: { gumpId: 5, name: 'copper', skillValue: 73, strValue: 35, type: "0x1BE3", color: "0x0641" },
+    gold: { gumpId: 7, name: 'gold', skillValue: 93, strValue: 75, type: "0x1BE9", color: "0x084D" },
+    rose: { gumpId: 8, name: 'rose', skillValue: 80, strValue: 50, type: "0x1BEF", color: "0x001C" },
+    agapite: { gumpId: 9, name: 'agapite', skillValue: 78, strValue: 45, type: "0x1BEF", color: "0x0400" },
+    prata: { gumpId: 10, name: 'prata', skillValue: 85, strValue: 60, type: "0x1BF5", color: "0x0482" },
+    verite: { gumpId: 11, name: 'verite', skillValue: 87, strValue: 65, type: "0x1BEF", color: "0x07D1" },
+    valorite: { gumpId: 12, name: 'valorite', skillValue: 90, strValue: 70, type: "0x1BEF", color: "0x0515" },
+    shadow: { gumpId: 13, name: 'shadow', skillValue: 83, strValue: 55, type: "0x1BEF", color: "0x0770" },
+    bloodRock: { gumpId: 14, name: 'bloodRock', skillValue: 95, strValue: 80, color: "0x04C2", type: "0x1BEF" },
+    blackRock: { gumpId: 15, name: 'blackRock', skillValue: 97, strValue: 85, type: "0x1BEF", color: "0x0455" },
+    mytheril: { gumpId: 16, name: 'mytheril', skillValue: 100, strValue: 90, type: "0x1BEF", color: "0x052D" },
+    ice: { gumpId: 17, name: 'ice', skillValue: 113, strValue: 80, type: "0x1BEF", color: "0x0480" },
+    magma: { gumpId: 18, name: 'magma', skillValue: 110, strValue: 95, type: "0x1BEF", color: "0x008A" },
+    celestial: { gumpId: 19, name: 'celestial', skillValue: 110, strValue: 100, type: "0x1BEF", color: "0x0481" },
+    bestial: { gumpId: 20, name: 'bestial', skillValue: 110, strValue: 100, type: "0x1BEF", color: "0x0497" },
+    vulcan: { gumpId: 21, name: 'vulcan', skillValue: 113, strValue: 80, type: "0x1BEF", color: "0x0489" },
+    cromita: { gumpId: 23, name: 'cromita', skillValue: 113, strValue: 80, type: "0x1BEF", color: "0x0785" },
+    clover: { gumpId: 24, name: 'clover', skillValue: 113, strValue: 80, type: "0x1BEF", color: "0x077B" },
+    sunset: { gumpId: 25, name: 'sunset', skillValue: 113, strValue: 80, type: "0x1BEF", color: "0x0A0C" },
+    sunrise: { gumpId: 26, name: 'sunrise', skillValue: 113, strValue: 80, type: "0x1BEF", color: "0x0782" },
+    darkGolden: { gumpId: 27, name: 'darkGolden', skillValue: 113, strValue: 80, type: "0x1BEF", color: "0x0498" },
+    deepSea: { gumpId: 28, name: 'deepSea', skillValue: 113, strValue: 80, type: "0x1BEF", color: "0x077C" },
+    titan: { gumpId: 29, name: 'titan', skillValue: 113, strValue: 80, type: "0x1BEF", color: "0x084C" },
+    demise: { gumpId: 30, name: 'demise', skillValue: 113, strValue: 80, type: "0x1BEF", color: "0x07CA" },
+    eclipse: { gumpId: 31, name: 'eclipse', skillValue: 113, strValue: 80, type: "0x1BEF", color: "0x04AB" },
+    plague: { gumpId: 32, name: 'plague', skillValue: 113, strValue: 80, type: "0x1BEF", color: "0x04AA" },
+    adamantium: { gumpId: 33, name: 'adamantium', skillValue: 113, strValue: 80, type: "0x1BEF", color: "0x0811" },
+    demoniac: { gumpId: 34, name: 'demoniac', skillValue: 113, strValue: 80, type: "0x1BEF", color: "0x07CD" },
+    holy: { gumpId: 35, name: 'holy', skillValue: 113, strValue: 80, type: "0x1BEF", color: "0x0030" },
+    sunLight: { gumpId: 36, name: 'sunLight', skillValue: 113, strValue: 80, type: "0x1BEF", color: "0x0496" },
+    elemental: { gumpId: 37, name: 'elemental', skillValue: 128, strValue: 80, type: "0x1BEF", color: "xxxxxx" },
+    electra: { gumpId: 38, name: 'electra', skillValue: 113, strValue: 80, type: "0x1BEF", color: "0x0AAC" },
+    lendario: { gumpId: 39, name: 'lendario', skillValue: 130, strValue: 100, type: "0x1BEF", color: "0x0793" },
+};
+
+/**
+ * Execução principal
+ */
+function AutoStart() {
+    Orion.Exec('eat'); // comer quando com fome
+
+    Orion.CloseMenu("all");
+    Orion.CloseGump("generic");
+
+    Orion.Disarm();
+    Orion.Wait(300);
+
+    const ingot = ingots[selectedIngot];
+
+    if (!checkIngotExists(ingot)) {
+        Orion.CharPrint(self, 27, 'Tipo de lingote inexistente.');
+        Orion.Terminate('eat');
+        return;
+    }
+
+    if (!checkSkillValue(ingot)) {
+        Orion.CharPrint(self, 27, 'Você não possui skill de blacksmith necessária. Valor requerido ' + ingot.skillValue);
+        Orion.Terminate('eat');
+        return;
+    }
+
+    if (Orion.Count(hammer, 'any', backpack) <= 0) {
+        Orion.CharPrint(self, 27, 'É preciso ter um martelo na sua backpack');
+        Orion.Terminate('eat');
+        return;
+    }
+
+    if (Orion.Count(forgeType, 'any', '0xFFFFFFFF') <= 0) {
+        Orion.CharPrint(self, 27, 'É preciso ter uma forja por perto');
+        Orion.Terminate('eat');
+        return;
+    }
+
+    // Usa o martelo
+    Orion.UseType(hammer);
+    Orion.Wait(300);
+
+    Orion.CancelWaitTarget();
+    Orion.Wait(300);
+
+    while (true) {
+        makePlatemail(ingot);
+        Orion.Wait(2000);
+        moveFullPlate();
+    }
+}
+
+/**
+ * Obtém a quantidade de itens de um container
+ * @param {object} ingot 
+ * @param {*} containerReference 
+ * @returns 
+ */
+function getIngotQuantity(ingot, containerReference) {
+    var quantity = 0;
+    const ingots = Orion.FindTypeEx(ingot.type, ingot.color, containerReference);
+
+    if (ingots && ingots.length > 0) {
+        for (var index in ingots) {
+            const totalMaterials = ingots[index];
+            quantity += totalMaterials.Count();
+        }
+    }
+
+    return quantity;
+}
+
+/**
+ * 
+ * @param {string} containerOrigin 
+ * @param {int} maxQuantity 
+ * @param {object} ingot 
+ * @returns object
+ */
+function getIngotFromMaterialContainer(containerOrigin, maxQuantity, ingot) {
+    var quantity = getIngotQuantity(ingot, backpack);
+
+    if (quantity >= maxQuantity) {
+        return quantity;
+    }
+
+    maxQuantity = maxQuantity - quantity;
+
+    Orion.UseObject(containerOrigin);
+    Orion.Wait(250);
+
+    clickButtonGump('last', ingot.gumpId);
+    Orion.Wait(250);
+
+    setGumpQuantity('last', maxQuantity);
+    Orion.Wait(200);
+
+    return getIngotQuantity(ingot, backpack);
+}
+
+/**
+ * Clica no botão de um gump pelo seu id
+ * @param {string} menu 
+ * @param {int} id 
+ */
+function clickButtonGump(menu, id) {
+    gumpSaveIgnore(menu);
+
+    if (Orion.WaitForGump(1000)) {
+        var gump1 = Orion.GetGump(menu);
+
+        if (gump1 !== null) {
+            gump1.Select(Orion.CreateGumpHook(id));
+            Orion.Wait(500);
+        }
+    }
+}
+
+/**
+ * Adiciona a quantidade numérica a um gump
+ * @param {string} menu 
+ * @param {int} quantity 
+ */
+function setGumpQuantity(menu, quantity) {
+    gumpSaveIgnore(menu);
+
+    if (Orion.WaitForGump(1000)) {
+        var gump2 = Orion.GetGump(menu);
+        Orion.Wait(100);
+
+        if (gump2 !== null) {
+            var hook = Orion.CreateGumpHook(1)
+            Orion.Wait(100);
+
+            if (hook && quantity) {
+                hook.AddEntry(0, quantity);
+                gump2.Select(hook);
+                Orion.Wait(300);
+            }
+        }
+    }
+}
+
+/**
+ * Obtém o texto de um gump
+ * @param {string} menu 
+ * @param {int} id 
+ * @returns string | undefined
+ */
+function getGumpText(menu, id) {
+    gumpSaveIgnore(menu);
+
+    if (Orion.WaitForGump(1000)) {
+        var gump0 = Orion.GetGump(menu);
+        if (gump0 !== null) {
+            return gump0.Text(id);
+        }
+    }
+
+    return undefined
+}
+
+/**
+ * Ignora o gump de save do shard
+ * @param {string} menu 
+ */
+function gumpSaveIgnore(menu) {
+    var gumpText = "";
+    var gump0 = undefined;
+
+    if (Orion.WaitForGump(1000)) {
+        var gump0 = Orion.GetGump(menu);
+
+        if (gump0 !== null) {
+            gumpText = gump0.Text(0);
+        }
+    }
+
+    if (gumpText == "O shard esta sendo salvo...") {
+        Orion.Print("Encontrou um menu do world save, ignorando gump!");
+        gump0.Close()
+    }
+}
+
+/**
+ * Verifica se o valor da skill é compatível com o yipo de fusão
+ * @param {*} ingot 
+ * @returns bool
+ */
+function checkSkillValue(ingot) {
+    return Orion.SkillValue('Blacksmithy', 'real') >= ingot.skillValue * 10;
+}
+
+/**
+ * Verifica se o tipo existe
+ * @param {*} ingot 
+ * @returns bool
+ */
+function checkIngotExists(ingot) {
+    return ingot != null && ingot != undefined;
+}
+
+function makePlatemail(ingot) {
+    for (var index in platemailParts) {
+        const part = platemailParts[index];
+        const gump = platemailGumps[ingot.name];
+
+        Orion.Say(ingot.name);
+        Orion.ClearJournal();
+
+        if (!part.active) {
+            Orion.CharPrint(self, 27, 'A parte ' + part.key + ' esta desativada');
+            Orion.Wait(150);
+            continue;
+        }
+
+        const partExists = Orion.Count(part.type, 'any', backpack) > 0;
+
+        if (partExists) {
+            Orion.CharPrint(self, 27, 'Já existe um ' + part.key);
+            Orion.Wait(150);
+            continue;
+        }
+
+        gumpSaveIgnore("last");
+
+        getIngotFromMaterialContainer(materialContainerID, part.quantity, ingot);
+        Orion.Wait(150);
+
+        Orion.UseType(ingot.type);
+        Orion.Wait(300);
+
+        if (Orion.WaitForMenu(1000)) {
+            var menu0 = Orion.GetMenu('last');
+
+            if (menu0 !== null) {
+                if (menu0.Name() === gump.initial.menu) {
+                    menu0.Select(gump.initial.select);
+                }
+
+                Orion.Wait(100);
+                Orion.CloseGump(menu0);
+            }
+        }
+
+        Orion.Wait(500);
+
+        if (gump.specific && Orion.WaitForMenu(1000)) {
+            var menuX = Orion.GetMenu('last');
+
+            if (menuX !== null) {
+                if (menuX.Name() === gump.specific.menu) {
+                    menuX.Select(gump.specific.select);
+                }
+
+                Orion.Wait(100);
+                Orion.CloseGump(menuX);
+            }
+
+            Orion.Wait(500);
+        }
+
+        if (Orion.WaitForMenu(1000)) {
+            var menu1 = Orion.GetMenu('last');
+
+            if (menu1 !== null) {
+                if (menu1.Name() === gump.armor.menu) {
+                    menu1.Select(gump.armor.select);
+                }
+
+                Orion.Wait(100);
+                Orion.CloseGump(menu1);
+            }
+        }
+
+        Orion.Wait(500);
+
+        if (Orion.WaitForMenu(1000)) {
+            var menu = Orion.GetMenu('last');
+
+            if (menu !== null) {
+                if (menu.Name() === gump.parts.menu) {
+                    Orion.Say('Fazendo ' + part.key);
+                    menu.Select(gump.parts[index]);
+                }
+
+                Orion.Wait(100);
+                Orion.CloseGump(menu);
+            }
+
+            Orion.WaitJournal('Voce colocou o|falhou', Orion.Now(), Orion.Now() + 14000);
+        }
+
+        Orion.Wait(300);
+    }
+}
+
+function moveFullPlate() {
+    const parts = '0x1412|0x1413|0x1414|0x1410|0x1411|0x1415|0x1B76|0x1BC4';
+    var totalParts = 0;
+
+    parts.split('|').forEach(function (part) {
+        const hasCountPart = Orion.Count(part, 'any', backpack) > 0;
+
+        if (hasCountPart) {
+            totalParts++;
+        }
+    });
+
+    const hasAllParts = totalParts >= 7;
+
+    if (hasAllParts) {
+        for (var index in platemailParts) {
+            const part = platemailParts[index];
+
+            const items = Orion.FindType(part.type, 'any', backpack);
+
+            if (items.length) {
+                for (var i = 0; i < items.length; i++) {
+                    const item = Orion.FindObject(items[i]);
+                    const props = item.Properties();
+                    const destiny = Orion.Contains(props.toLowerCase(), 'luck', true) ? luckContainerID : pvpContainerID;
+
+                    moveItems(backpack, destiny, part.type, 'any', 1);
+                }
+            }
+        }
+    } else {
+        Orion.Print('Não temos todas as partes para mover');
+    }
+}
+
+/**
+* Move itens entre containers
+* @param string containerOrigin 
+* @param string containerDestiny 
+* @param string graphic 
+* @param string color 
+* @param integer quantity 
+*/
+function moveItems(containerOrigin, containerDestiny, graphic, color, quantity) {
+    Orion.UseObject(containerOrigin);
+    Orion.Wait(200);
+    Orion.DragItemType(graphic, color, containerOrigin, quantity);
+    Orion.Wait(200);
+    Orion.DropDraggedItem(containerDestiny, 76, 98);
+}
+
+/**
+ * Faz o char comer quando estiver com fome
+ */
+function eat() {
+    const foods = [
+        '0x097B',
+        '0x160A',
+        '0x103B',
+        '0x0C79',
+    ];
+
+    while (true) {
+        if (Orion.InJournal('fome')) {
+            for (var i = 0; i < 5; i++) {
+                foods.forEach(function (food) {
+                    Orion.UseType(food);
+                    Orion.Wait(1000);
+                });
+            }
+
+            Orion.ClearJournal();
+        }
+    }
+}
