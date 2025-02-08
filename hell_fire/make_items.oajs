@@ -121,7 +121,7 @@ const items = {
  * Execução principal
  */
 function AutoStart() {
-    //Orion.Exec('eat'); // comer quando com fome
+    Orion.Exec('eat');
 
     Orion.CloseMenu("all");
     Orion.CloseGump("generic");
