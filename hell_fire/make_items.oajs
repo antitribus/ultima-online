@@ -1,0 +1,382 @@
+/**
+ * Macro para criação de itens
+ * @author: Antitribus
+ * @updated_at: 2025-02-08
+ * @shard: HellFire <hfshard.com.br>
+ */
+
+// Área de variáveis para serem alteradas
+// ----------------------------------------------------------------------------------------------
+
+// Bau de Materiais onde estão os lingotes
+const materialContainerID = '0x4002A211';
+
+// Container para guardar itens com luck
+const luckContainerID = '0x400E7457';
+
+// Container para guardar itens
+const guardContainerID = '0x4004D3A7';
+
+// Item à ser fabricado
+const selectedItem = 'magicRing5';
+
+// Define o total de itens à serem feitos
+const totalItemsToManufacture = 10;
+
+// Quantidade de itens feitos
+const totalItemsManufactureds = 0;
+
+// Caso queira rodar o macro sem limite de itens
+const forced = false;
+
+// ----------------------------------------------------------------------------------------------
+
+const tools = {
+    tinker: '0x1EB9',
+    forge: '0x0FB1'
+};
+
+const ingots = {
+    iron: { parentId: 40, id: 1, name: 'iron', type: "0x1BEF", color: "0x0000" },
+    copper: { parentId: 40, id: 5, name: 'copper', type: "0x1BE3", color: "0x0641" },
+    gold: { parentId: 40, id: 7, name: 'gold', type: "0x1BE9", color: "0x084D" },
+    rose: { parentId: 40, id: 8, name: 'rose', type: "0x1BEF", color: "0x001C" },
+    agapite: { parentId: 40, id: 9, name: 'agapite', type: "0x1BEF", color: "0x0400" },
+    prata: { parentId: 40, id: 10, name: 'prata', type: "0x1BF5", color: "0x0482" },
+    verite: { parentId: 40, id: 11, name: 'verite', type: "0x1BEF", color: "0x07D1" },
+    valorite: { parentId: 40, id: 12, name: 'valorite', type: "0x1BEF", color: "0x0515" },
+    shadow: { parentId: 40, id: 13, name: 'shadow', type: "0x1BEF", color: "0x0770" },
+    bloodRock: { parentId: 40, id: 14, name: 'bloodRock', type: "0x1BEF", color: "0x04C2" },
+    blackRock: { parentId: 40, id: 15, name: 'blackRock', type: "0x1BEF", color: "0x0455" },
+    mytheril: { parentId: 40, id: 16, name: 'mytheril', type: "0x1BEF", color: "0x052D" },
+    ice: { parentId: 40, id: 17, name: 'ice', type: "0x1BEF", color: "0x0480" },
+    magma: { parentId: 40, id: 18, name: 'magma', type: "0x1BEF", color: "0x008A" },
+    celestial: { parentId: 40, id: 19, name: 'celestial', type: "0x1BEF", color: "0x0481" },
+    bestial: { parentId: 40, id: 20, name: 'bestial', type: "0x1BEF", color: "0x0497" },
+    vulcan: { parentId: 40, id: 21, name: 'vulcan', type: "0x1BEF", color: "0x0489" },
+    cromita: { parentId: 40, id: 23, name: 'cromita', type: "0x1BEF", color: "0x0785" },
+    clover: { parentId: 40, id: 24, name: 'clover', type: "0x1BEF", color: "0x077B" },
+    sunset: { parentId: 40, id: 25, name: 'sunset', type: "0x1BEF", color: "0x0A0C" },
+    sunrise: { parentId: 40, id: 26, name: 'sunrise', type: "0x1BEF", color: "0x0782" },
+    darkGolden: { parentId: 40, id: 27, name: 'darkGolden', type: "0x1BEF", color: "0x0498" },
+    deepSea: { parentId: 40, id: 28, name: 'deepSea', type: "0x1BEF", color: "0x077C" },
+    titan: { parentId: 40, id: 29, name: 'titan', type: "0x1BEF", color: "0x084C" },
+    demise: { parentId: 40, id: 30, name: 'demise', type: "0x1BEF", color: "0x07CA" },
+    eclipse: { parentId: 40, id: 31, name: 'eclipse', type: "0x1BEF", color: "0x04AB" },
+    plague: { parentId: 40, id: 32, name: 'plague', type: "0x1BEF", color: "0x04AA" },
+    adamantium: { parentId: 40, id: 33, name: 'adamantium', type: "0x1BEF", color: "0x0811" },
+    demoniac: { parentId: 40, id: 34, name: 'demoniac', type: "0x1BEF", color: "0x07CD" },
+    holy: { parentId: 40, id: 35, name: 'holy', type: "0x1BEF", color: "0x0030" },
+    sunLight: { parentId: 40, id: 36, name: 'sunLight', type: "0x1BEF", color: "0x0496" },
+    elemental: { parentId: 40, id: 37, name: 'elemental', type: "0x1BEF", color: "xxxxxx" },
+    electra: { parentId: 40, id: 38, name: 'electra', type: "0x1BEF", color: "0x0AAC" },
+    lendario: { parentId: 40, id: 39, name: 'lendario', type: "0x1BEF", color: "0x0793" }
+};
+
+const pedras = {
+    amber: { parentId: 43, id: 1, name: 'amber', type: "0x0F25", color: "0x0000" },
+    diamond: { parentId: 43, id: 2, name: 'diamond', type: "0x0F26", color: "0x0000" },
+    ruby: { parentId: 43, id: 3, name: 'ruby', type: '0x0F13', color: "0x0000" },
+    citrine: { parentId: 43, id: 4, name: 'citrine', type: "0x0F15", color: "0x0000" },
+    emerald: { parentId: 43, id: 5, name: 'emerald', type: "0x0F10", color: "0x0000" },
+    starSapphire: { parentId: 43, id: 6, name: 'star sapphire', type: "0x0F0F", color: "0x0000" },
+    sapphire: { parentId: 43, id: 7, name: 'sapphire', type: "0x0F11", color: "0x0000" },
+    amethyst: { parentId: 43, id: 8, name: 'amethyst', type: "0x0F16", color: "0x0000" },
+    tourmaline: { parentId: 43, id: 9, name: 'tourmaline', type: "0x0F18", color: "0x0000" },
+    vulcanicRock: { parentId: 43, id: 10, name: 'vulcanic rock', type: "0x1779", color: "0x0000", unique: true },
+    geodeShard: { parentId: 43, id: 11, name: 'geode shard', type: "0x4B48", color: "0x0000", unique: true },
+    rock: { parentId: 43, id: 12, name: 'rock', type: "0x1363", color: "0x0000", unique: true }
+}
+
+const items = {
+    magicRing5: {
+        type: '0x108A',
+        color: '0x008A',
+        tool: tools.tinker,
+        materials: [
+            { item: pedras.ruby, quantity: 4 },
+            { item: pedras.diamond, quantity: 4 },
+            { item: ingots.magma, quantity: 4 }
+        ],
+        steps: [
+            { menu: 'Joias', select: '+5 Magic Ring (4 lingotes de Magma, 4 flawless diamond, 4 flawless ruby)' }
+        ]
+    },
+    magicEarrings7: {
+        type: '0x1087',
+        color: '0x008A',
+        tool: tools.tinker,
+        materials: [
+            { item: pedras.sapphire, quantity: 2 },
+            { item: pedras.ruby, quantity: 4 },
+            { item: ingots.magma, quantity: 4 }
+        ],
+        steps: [
+            { menu: 'Joias', select: '+7 Magic Earrings (4 lingotes de Magma, 4 flawless ruby, 2 chipped sapphire)' }
+        ]
+    }
+};
+
+/**
+ * Execução principal
+ */
+function AutoStart() {
+    //Orion.Exec('eat'); // comer quando com fome
+
+    Orion.CloseMenu("all");
+    Orion.CloseGump("generic");
+
+    const item = items[selectedItem];
+
+    while (forced || totalItemsManufactureds < totalItemsToManufacture) {
+        item.materials.forEach(function (material) {
+            getMaterialFromMaterialContainer(materialContainerID, material);
+            Orion.Wait(250);
+        });
+
+        makeItem(item);
+        guardItem(item);
+
+        Orion.Wait(200);
+    }
+}
+
+/**
+ * Obtém a quantidade de itens de um container
+ * @param {object} material 
+ * @param {*} containerReference 
+ * @returns 
+ */
+function getQuantity(material, containerReference) {
+    var quantity = 0;
+    const items = Orion.FindTypeEx(material.item.type, material.item.color, containerReference);
+
+    if (items && items.length > 0) {
+        for (var index in items) {
+            const totalMaterials = items[index];
+            quantity += totalMaterials.Count();
+        }
+    }
+
+    return quantity;
+}
+
+/**
+ * 
+ * @param {string} containerOrigin 
+ * @param {int} maxQuantity 
+ * @param {object} material 
+ * @returns object
+ */
+function getMaterialFromMaterialContainer(containerOrigin, material) {
+    var quantity = getQuantity(material, backpack);
+
+    if (quantity >= material.quantity) {
+        return quantity;
+    }
+
+    maxQuantity = material.quantity - quantity;
+
+    Orion.UseObject(containerOrigin);
+    Orion.Wait(500);
+
+    clickButtonGump('last', material.item.parentId);
+    Orion.Wait(250);
+
+    clickButtonGump('last', material.item.id);
+    Orion.Wait(250);
+
+    // para gums que precisam setar numero de materiais
+    if (!material.unique) {
+        setGumpQuantity('last', maxQuantity);
+        Orion.Wait(200);
+    }
+
+    return getQuantity(material, backpack);
+}
+
+/**
+ * Clica no botão de um gump pelo seu id
+ * @param {string} menu 
+ * @param {int} id 
+ */
+function clickButtonGump(menu, id) {
+    gumpSaveIgnore(menu);
+
+    if (Orion.WaitForGump(1000)) {
+        var gump1 = Orion.GetGump(menu);
+
+        if (gump1 !== null) {
+            gump1.Select(Orion.CreateGumpHook(id));
+            Orion.Wait(500);
+        }
+    }
+}
+
+/**
+ * Adiciona a quantidade numérica a um gump
+ * @param {string} menu 
+ * @param {int} quantity 
+ */
+function setGumpQuantity(menu, quantity) {
+    gumpSaveIgnore(menu);
+
+    if (Orion.WaitForGump(1000)) {
+        var gump2 = Orion.GetGump(menu);
+        Orion.Wait(100);
+
+        if (gump2 !== null) {
+            var hook = Orion.CreateGumpHook(1)
+            Orion.Wait(100);
+
+            if (hook && quantity) {
+                hook.AddEntry(0, quantity);
+                gump2.Select(hook);
+                Orion.Wait(300);
+            }
+        }
+    }
+}
+
+/**
+ * Obtém o texto de um gump
+ * @param {string} menu 
+ * @param {int} id 
+ * @returns string | undefined
+ */
+function getGumpText(menu, id) {
+    gumpSaveIgnore(menu);
+
+    if (Orion.WaitForGump(1000)) {
+        var gump0 = Orion.GetGump(menu);
+        if (gump0 !== null) {
+            return gump0.Text(id);
+        }
+    }
+
+    return undefined
+}
+
+/**
+ * Ignora o gump de save do shard
+ * @param {string} menu 
+ */
+function gumpSaveIgnore(menu) {
+    var gumpText = "";
+    var gump0 = undefined;
+
+    if (Orion.WaitForGump(1000)) {
+        var gump0 = Orion.GetGump(menu);
+
+        if (gump0 !== null) {
+            gumpText = gump0.Text(0);
+        }
+    }
+
+    if (gumpText == "O shard esta sendo salvo...") {
+        Orion.Print("Encontrou um menu do world save, ignorando gump!");
+        gump0.Close()
+    }
+}
+
+function makeItem(item) {
+    var currentStep = 0;
+
+    Orion.UseType(item.tool);
+    Orion.Wait(300);
+
+    Orion.ClearJournal();
+
+    item.steps.forEach(function (step) {
+        gumpSaveIgnore(step.menu);
+
+        if (Orion.WaitForMenu(1000)) {
+            var menu1 = Orion.GetMenu('last');
+
+            if (menu1 !== null) {
+                if (menu1.Name() === step.menu) {
+                    menu1.Select(step.select);
+                }
+
+                Orion.Wait(250);
+                Orion.CloseGump(menu1);
+            }
+
+            Orion.Wait(250);
+        }
+
+        Orion.Wait(250);
+
+        currentStep++;
+
+        if (currentStep >= item.steps.length) {
+            Orion.WaitJournal('Voce colocou|falhou|Voce tem que aguardar', Orion.Now(), Orion.Now() + 14000);
+        }
+
+        if (Orion.InJournal('Voce colocou')) {
+            totalItemsManufactureds++;
+            Orion.Print('Voce fabricou ' + totalItemsManufactureds + ' itens');
+        }
+
+        Orion.Wait(200);
+    })
+}
+
+function guardItem(item) {
+    const items = Orion.FindType(item.type, item.color, backpack);
+    var destiny = guardContainerID;
+
+    if (items.length) {
+        for (var i = 0; i < items.length; i++) {
+            const itemSearch = Orion.FindObject(items[i]);
+
+            if (itemSearch) {
+                const props = itemSearch.Properties();
+                destiny = Orion.Contains(props.toLowerCase(), 'luck', true) ? luckContainerID : guardContainerID;
+            }
+
+            moveItems(backpack, destiny, item.type, item.color, 1);
+        }
+    }
+}
+
+/**
+* Move itens entre containers
+* @param string containerOrigin 
+* @param string containerDestiny 
+* @param string graphic 
+* @param string color 
+* @param integer quantity 
+*/
+function moveItems(containerOrigin, containerDestiny, graphic, color, quantity) {
+    Orion.UseObject(containerOrigin);
+    Orion.Wait(200);
+    Orion.DragItemType(graphic, color, containerOrigin, quantity);
+    Orion.Wait(200);
+    Orion.DropDraggedItem(containerDestiny, 76, 98);
+}
+
+/**
+ * Faz o char comer quando estiver com fome
+ */
+function eat() {
+    const foods = [
+        '0x097B',
+        '0x160A',
+        '0x103B',
+        '0x0C79',
+    ];
+
+    while (true) {
+        if (Orion.InJournal('fome')) {
+            for (var i = 0; i < 5; i++) {
+                foods.forEach(function (food) {
+                    Orion.UseType(food);
+                    Orion.Wait(1000);
+                });
+            }
+
+            Orion.ClearJournal();
+        }
+    }
+}
