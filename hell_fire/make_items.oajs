@@ -18,7 +18,7 @@ const luckContainerID = '0x400E7457';
 const guardContainerID = '0x4004D3A7';
 
 // Item à ser fabricado
-const selectedItem = 'magicRing5';
+const selectedItem = 'bodySashOfForce5';
 
 // Define o total de itens à serem feitos
 const totalItemsToManufacture = 10;
@@ -32,8 +32,9 @@ const forced = false;
 // ----------------------------------------------------------------------------------------------
 
 const tools = {
+    forge: '0x0FB1',
     tinker: '0x1EB9',
-    forge: '0x0FB1'
+    tailor: '0x0F9D'
 };
 
 const ingots = {
@@ -86,7 +87,11 @@ const pedras = {
     vulcanicRock: { parentId: 43, id: 10, name: 'vulcanic rock', type: "0x1779", color: "0x0000", unique: true },
     geodeShard: { parentId: 43, id: 11, name: 'geode shard', type: "0x4B48", color: "0x0000", unique: true },
     rock: { parentId: 43, id: 12, name: 'rock', type: "0x1363", color: "0x0000", unique: true }
-}
+};
+
+const variados = {
+    cloths: { parentId: 44, id: 4, name: 'cloths', type: "0x175D", color: "0x0000" },
+};
 
 const items = {
     magicRing5: {
@@ -114,7 +119,51 @@ const items = {
         steps: [
             { menu: 'Joias', select: '+7 Magic Earrings (4 lingotes de Magma, 4 flawless ruby, 2 chipped sapphire)' }
         ]
-    }
+    },
+    pantsOfInteligence5: {
+        type: '0x152E',
+        color: '0x0000',
+        tool: tools.tailor,
+        target: variados.cloths,
+        materials: [
+            { item: pedras.tourmaline, quantity: 2 },
+            { item: pedras.amethyst, quantity: 2 },
+            { item: variados.cloths, quantity: 6 }
+        ],
+        steps: [
+            { menu: 'Roupas', select: 'Pants' },
+            { menu: 'Calcas', select: '+5 Pants of Inteligence (6 folded cloth, 2 chipped amethyst, 2 flawless tourmaline)' }
+        ]
+    },
+    shirtOfDexterity5: {
+        type: '0x1517',
+        color: '0x0000',
+        tool: tools.tailor,
+        target: variados.cloths,
+        materials: [
+            { item: pedras.starSapphire, quantity: 2 },
+            { item: pedras.emerald, quantity: 2 },
+            { item: variados.cloths, quantity: 8 }
+        ],
+        steps: [
+            { menu: 'Roupas', select: 'Shirt' },
+            { menu: 'Camisas', select: '+5 Shirt of Dexterity (8 folded cloth, 2 flawless emerald, 2 chipped star sapphire)' }
+        ]
+    },
+    bodySashOfForce5: {
+        type: '0x1541',
+        color: '0x0000',
+        tool: tools.tailor,
+        target: variados.cloths,
+        materials: [
+            // precisa de 4 nightshade por item, faz favor né?
+            { item: variados.cloths, quantity: 4 }
+        ],
+        steps: [
+            { menu: 'Roupas', select: 'Misc.' },
+            { menu: 'Diversos', select: '+5 Body Sash of Force (4 folded cloth, 4 Nightshade)' }
+        ]
+    },
 };
 
 /**
@@ -135,8 +184,9 @@ function AutoStart() {
         });
 
         makeItem(item);
-        guardItem(item);
+        Orion.Wait(500);
 
+        guardItem(item);
         Orion.Wait(200);
     }
 }
@@ -285,9 +335,14 @@ function makeItem(item) {
     Orion.UseType(item.tool);
     Orion.Wait(300);
 
-    Orion.ClearJournal();
+    if (item.target) {
+        Orion.TargetType(item.target.type, item.target.color, backpack, 'fast', false);
+        Orion.Wait(150);
+    }
 
     item.steps.forEach(function (step) {
+        Orion.ClearJournal();
+
         gumpSaveIgnore(step.menu);
 
         if (Orion.WaitForMenu(1000)) {
@@ -309,13 +364,13 @@ function makeItem(item) {
 
         currentStep++;
 
-        if (currentStep >= item.steps.length) {
-            Orion.WaitJournal('Voce colocou|falhou|Voce tem que aguardar', Orion.Now(), Orion.Now() + 14000);
-        }
-
         if (Orion.InJournal('Voce colocou')) {
             totalItemsManufactureds++;
             Orion.Print('Voce fabricou ' + totalItemsManufactureds + ' itens');
+        }
+
+        if (currentStep >= item.steps.length) {
+            Orion.WaitJournal('Voce colocou|falhou|Voce tem que aguardar', Orion.Now(), Orion.Now() + 10000);
         }
 
         Orion.Wait(200);
