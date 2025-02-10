@@ -13,7 +13,9 @@ var xmaximo = 2633; // Posição em X para voltar
 
 var time = 500;
 
-function Autostart() { Orion.Exec('fishing', true); }
+function Autostart() { 
+    Orion.Exec('fishing', true); 
+}
 
 function fishing() {
     guardar();
