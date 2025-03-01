@@ -1,0 +1,97 @@
+/*
+ * @author: Antitribus
+ * @version: 1.0.1
+ * @name: handler
+ * @description: Macro para GMzar Tinkering fazendo aneis
+ * @created_at: 2024-07-19
+ * @updated_at: 2024-07-22
+ * @shard: AnCorp Shard
+  */
+function AutoStart() {
+    var skill = 'Tinkering';
+    var tool = '0x1EBC'; // serial do tinker tool na backpack
+    var ingotBag = '0x400BF043'; // serial da bag com ingot de ceramic no banco
+    var emptyBottleBag = '0x400761AF' // serial da bag para colocar os bottle pós cálculo de peso
+    var maxWeightAllow = Player.MaxWeight() - 50; // cálculo de peso máximo permitido
+    var ingot = '0x1BEF';
+    var ingotCeramicColor = '0x0000';
+    var emptyBottle = '0x1876';
+    var emptyBottleColor = '0x0000';
+
+    while (Orion.SkillValue(skill, 'real') < 1000) {
+    	if(Orion.InJournal('save|salvar|mundo|world')) {
+    		Orion.Wait(15000);
+    	}
+    	
+        var hasCeramic = Orion.Count(ingot, ingotCeramicColor, 'backpack') > 0;
+
+        if ((Player.Weight() < maxWeightAllow) && hasCeramic) {
+            Orion.ClearJournal();
+
+			Orion.UseType(tool);
+			
+			if (Orion.WaitForMenu(1000))
+			{
+				var menu0 = Orion.GetMenu('last');
+				if (menu0 !== null)
+				{
+					if (menu0.Name() === "Funilaria")
+						menu0.Select('Pecas');
+					
+					Orion.CloseGump(menu0);	
+				}
+			}
+			
+			if (Orion.WaitForMenu(1000))
+			{
+				var menu1 = Orion.GetMenu('last');
+				if (menu1 !== null)
+				{
+					if (menu1.Name() === "Pecas")
+						menu1.Select('iron wire (1 lingote de ferro)');
+						
+						Orion.CloseGump(menu1);
+				}
+			}
+
+            Orion.WaitJournal('Voce pos|Voce falhou', Orion.Now(), Orion.Now() + 5000);
+            
+            Orion.Print('Guardando os potes vazios no banco');
+            Orion.Wait(700);
+            Orion.UseObject(emptyBottleBag);
+            Orion.Wait(700);
+            Orion.DragItemType(emptyBottle, emptyBottleColor, 'backpack', (100 - Orion.Count(emptyBottle, emptyBottleColor, emptyBottleBag)));
+            Orion.Wait(300);
+            Orion.DropDraggedItem(emptyBottleBag, 76, 98);
+            Orion.Wait(700);
+
+        }
+        else {
+            //Orion.Say('Banker Bank - Buy - Guards');
+
+            Orion.Print('Pegando mais ceramica no banco');
+            Orion.UseObject(ingotBag);
+            Orion.Wait(700);
+            Orion.DragItemType(ingot, ingotCeramicColor, ingotBag, (30 - Orion.Count(ingot, ingotCeramicColor, 'backpack')));
+            Orion.Wait(300);
+            Orion.DropDraggedItem('backpack', 76, 98);
+            Orion.Wait(700);
+        }
+    }
+}
+
+/**
+* Move itens entre containers
+* @param string containerOrigin 
+* @param string containerDestiny 
+* @param string graphic 
+* @param string color 
+* @param integer quantity 
+*/
+function moveItems(containerOrigin, containerDestiny, graphic, color, quantity) {
+    Orion.UseObject(containerOrigin);
+    Orion.Wait(200);
+    Orion.DragItemType(graphic, color, containerOrigin, (quantity - Orion.Count(graphic, color, containerDestiny)));
+    Orion.Wait(200);
+    Orion.DropDraggedItem(containerDestiny, 76, 98);
+}
