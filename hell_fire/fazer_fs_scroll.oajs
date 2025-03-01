@@ -1,0 +1,84 @@
+function AutoStart() {
+	const skill = 'Inscription';
+	
+	while(Orion.SkillValue(skill, 'real') < 10000){
+		if(Orion.InJournal('salvamento|mundo')) {
+    		Orion.Wait(15000);
+    	}
+    	
+    	// sa
+		if(Orion.Count('0x0F8C', 'any', backpack) < 1){
+			Orion.Say('Pegando Sulfurus ash');
+			Orion.Wait(200);
+			
+			moveItems('0x40052AB1', backpack, '0x0F8C', 'any', 1);
+		}
+		
+		if(Orion.Count('0x0F8D', 'any', backpack) < 1){
+			Orion.Say('Pegando Spider silk');
+			Orion.Wait(200);
+			
+			moveItems('0x40052AB1', backpack, '0x0F8D', 'any', 1);
+		}
+		
+		// blank scrool
+		if(Orion.Count('0x0E34', 'any', backpack) < 1){
+			Orion.Say('Pegando Blank Scrool');
+			Orion.Wait(200);
+			
+			moveItems('0x40052AB1', backpack, '0x0E34', 'any', 1);
+		}
+
+					
+		Orion.UseType('0x0E34');
+
+		if (Orion.WaitForMenu(1000))
+		{
+			var menu0 = Orion.GetMenu('last');
+			if (menu0 !== null)
+			{
+				if (menu0.Name() === "Spell Circles")
+					menu0.Select('seventh circle');
+			}
+			Orion.CloseGump(menu0);	
+		}
+		
+		Orion.Wait(200);
+		
+		if (Orion.WaitForMenu(1000))
+		{
+			var menu1 = Orion.GetMenu('last');
+			if (menu1 !== null)
+			{
+				if (menu1.Name() === "Spell Circle 7")
+					menu1.Select('flamestrike');
+			}
+			Orion.CloseGump(menu1);	
+		}
+		
+		Orion.WaitJournal('colocou|falhou', Orion.Now(), Orion.Now() + 8000);
+		
+		Orion.Wait(200);
+		
+		while (Orion.Count('0x1F5F', '0x0000', backpack) > 0) {
+			moveItems(backpack, '0x40029AAD', '0x1F5F', '0x0000', 1);
+		}
+	}	
+}
+
+/**
+* Move itens entre containers
+* @param string containerOrigin 
+* @param string containerDestiny 
+* @param string graphic 
+* @param string color 
+* @param integer quantity 
+*/
+function moveItems(containerOrigin, containerDestiny, graphic, color, quantity) {
+    Orion.UseObject(containerOrigin);
+    Orion.Wait(200);
+    Orion.DragItemType(graphic, color, containerOrigin, quantity);
+    Orion.Wait(200);
+    Orion.DropDraggedItem(containerDestiny, 76, 98);
+    Orion.Wait(200);
+}
