@@ -1,0 +1,13 @@
+function guardIngots() {
+	const ingots = '0x09B0|0x1BEF|0x1BE9|0x1BF5|0x1BE3';
+	var container = '0x40052AB4';
+	
+	if(Player.Name().indexOf('Hades') !== -1) {
+		conatiner = '0x4008324E';
+	}
+	
+	while(Orion.Count(ingots, any, container)) {
+		moveItems(container, '0x4002A211', ingots, any, 500);
+		Orion.Wait(500)
+	}
+}
