@@ -1,0 +1,29 @@
+function guardRocks() {
+    var containerRocks = '0x4008324E';
+    var containerDestiny = '0x4002A211';
+    
+    var listRocks = [
+	    { id: '0', nome: 'Emeralds', graphic: '0x0F10', qtd: '200' },
+	    { id: '1', nome: 'Saphires', graphic: '0x0F11', qtd: '200' },
+	    { id: '2', nome: 'Rubies', graphic: '0x0F13', qtd: '200' },
+	    { id: '3', nome: 'Citrines', graphic: '0x0F15', qtd: '200' },
+	    { id: '4', nome: 'Diamonds', graphic: '0x0F26', qtd: '200' },
+	    { id: '5', nome: 'Tourmalines', graphic: '0x0F18', qtd: '200' },
+	    { id: '6', nome: 'Amethysts', graphic: '0x0F16', qtd: '200' },
+	    { id: '7', nome: 'Star Saphires', graphic: '0x0F0F', qtd: '200' }
+	    { id: '7', nome: 'Rocks', graphic: '0x1363', qtd: '1' },
+	    { id: '7', nome: 'Rocha Vulcânica', graphic: '0x4B4B', qtd: '1' },
+	    { id: '7', nome: 'Granito', graphic: '0x0F8F', qtd: 500 },
+	];
+
+    while (true) {
+        for (var i = 0; i < listRocks.length; i++) {
+            var rocks = Orion.FindType(listRocks[i].graphic, '0x0000', containerRocks);
+            
+            for (var j = 0; j < rocks.length; j++) {
+                Orion.MoveItem(rocks[j], 1, containerDestiny);
+                Orion.Wait(500);
+            }
+        }
+    }
+}
