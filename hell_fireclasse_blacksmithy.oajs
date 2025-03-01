@@ -1,0 +1,68 @@
+function AutoStart() {
+	while(true){
+		if(Orion.InJournal('salvamento|mundo')) {
+    		Orion.Wait(15000);
+    	}
+    	
+		if(Orion.Count('0x1BE9', 'any', backpack) < 8){
+			moveItems('0x40052AB1', backpack, '0x1BE9', 'any', 80);
+			Orion.Wait(500);
+		}
+		
+		if(Orion.Count('0x0F13', 'any', backpack) < 1){
+			moveItems('0x40052AB1', backpack, '0x0F13', 'any', 20);
+			Orion.Wait(500);
+		}
+		
+		Orion.Wait(500);
+					
+		Orion.UseType('0x1BE9');
+		
+		Orion.Wait(500);
+		
+		if (Orion.WaitForMenu(1000))
+		{
+			var menu0 = Orion.GetMenu('last');
+			if (menu0 !== null)
+			{
+				if (menu0.Name() === "Ferreiro")
+					menu0.Select('Weapons');
+			}
+			
+			Orion.CloseGump(menu0);
+		}
+		if (Orion.WaitForMenu(1000))
+		{
+			var menu1 = Orion.GetMenu('last');
+			if (menu1 !== null)
+			{
+				if (menu1.Name() === "Armas do HellFire")
+					menu1.Select('Espada Dourada (8 lingotes de ouro, 1 flawless ruby)');
+			}
+			Orion.CloseGump(menu1);
+		}
+		
+		Orion.WaitJournal('colocou|falhou', Orion.Now(), Orion.Now() + 9000);
+		
+		if(Orion.InJournal('criou 300')) {
+			Orion.StopMacro();
+		}
+	}	
+}
+
+/**
+* Move itens entre containers
+* @param string containerOrigin 
+* @param string containerDestiny 
+* @param string graphic 
+* @param string color 
+* @param integer quantity 
+*/
+function moveItems(containerOrigin, containerDestiny, graphic, color, quantity) {
+    Orion.UseObject(containerOrigin);
+    Orion.Wait(200);
+    Orion.DragItemType(graphic, color, containerOrigin, quantity);
+    Orion.Wait(200);
+    Orion.DropDraggedItem(containerDestiny, 76, 98);
+    Orion.Wait(200);
+}
