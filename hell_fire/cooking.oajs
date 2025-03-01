@@ -1,0 +1,53 @@
+/*
+ * @author: Antitribus
+ * @version: 1.0.1
+ * @name: makeLesserPoison
+ * @description: Macro para GMzar Cooking
+ * @created_at: 2024-07-22
+ * @updated_at: 2024-07-22
+ * @shard: AnCorp Shard
+  */
+function AutoStart() {
+    var skill = 'Cooking';
+    var fishBag = '0x40052AB1'; // serial da bag com os peixes
+    var cookedFishBag = '0x4009178F' // serial da bag para colocar os peixes assados
+    var maxWeightAllow = Player.MaxWeight() - 50; // cálculo de peso máximo permitido
+    var fish = '0x097A';
+    var cookedFish = '0x097B';
+    var forge = '0x4002F0D6';
+	  var force = true; // true | false -> Se true faz até ter materiais nos containers
+	
+    while (force || Orion.SkillValue(skill, 'real') < 1000) {
+        var hasFish = Orion.Count(fish, '0x0000', 'backpack') > 0;
+
+        if ((Player.Weight() < maxWeightAllow) && hasFish) {
+            Orion.ClearJournal();
+
+            Orion.UseType(fish, '0xFFFF');
+            
+			if (Orion.WaitForTarget(1000)) {
+				Orion.TargetObject(forge);
+			}
+
+            Orion.WaitJournal('Voce pos|Voce falhou', Orion.Now(), Orion.Now() + 3500);
+        }
+        else {
+            Orion.Print('Guardando os peixes');
+            Orion.Wait(700);
+            Orion.UseObject(cookedFishBag);
+            Orion.Wait(700);
+            Orion.DragItemType(cookedFish, '0x0000', 'backpack', (200 - Orion.Count(cookedFish, '0x0000', cookedFishBag)));
+            Orion.Wait(300);
+            Orion.DropDraggedItem(cookedFishBag, 76, 98);
+            Orion.Wait(700);
+
+            Orion.Print('Pegando mais peixes');
+            Orion.UseObject(fishBag);
+            Orion.Wait(700);
+            Orion.DragItemType(fish, 'any', fishBag, (200 - Orion.Count(fish, 'any', 'backpack')));
+            Orion.Wait(300);
+            Orion.DropDraggedItem('backpack', 76, 98);
+            Orion.Wait(700);
+        }
+    }
+}
