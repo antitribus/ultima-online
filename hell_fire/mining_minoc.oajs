@@ -9,6 +9,7 @@ var bankX = 5319, bankY = 1895, bankZ = 0
 var usePlayerZ = false
 var rareOresCor = 'any' // Inferno Chaos order celestial
 var typeOres = '0x19B9|0x19B8|0x19B7|0x19BA';
+var typeRocks = '0x0F8F|0x1779';
 var ignoreOres = /*item:cor*/{
 };
 var braceleteDeMining = "0x1F06"
@@ -181,6 +182,7 @@ function Cave() {
 				}
 			}
 			Orion.ClearJournal();
+			discart();
 			Orion.WaitTargetTileRelative('any', x, y, Player.Z() - 0 ? 0 : Player.Z());
 			Orion.UseType(pickaxe);
 			verificaLimite();
@@ -262,6 +264,7 @@ function Guardar() {
 		}
 		Orion.Wait(100);
 	}
+	
 	while (Orion.Count(typeJoias, 'any', backpack) >= 1) {
 		var finditem = Orion.FindType(typeJoias, 'any', backpack);
 		for (i = 0; i < finditem.length; i++) {
@@ -270,6 +273,16 @@ function Guardar() {
 		}
 		Orion.Wait(100);
 	}
+	
+	while (Orion.Count(typeRocks, 'any', backpack) >= 1) {
+		var finditem = Orion.FindType(typeRocks, 'any', backpack);
+		for (i = 0; i < finditem.length; i++) {
+			Orion.MoveItem(finditem[i], 0, bauBS);
+			Orion.Wait(500);
+		}
+		Orion.Wait(100);
+	}
+	
 	//CheckPickaxe(1);
 }
 
