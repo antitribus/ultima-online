@@ -1,0 +1,17 @@
+function autobands() {
+    Orion.CharPrint(self, '99', 'Bands On');
+    while (true) {
+        if (Player.Hits() < Player.MaxHits() && !Player.Poisoned()) {
+            var bandages = Orion.FindType('0x0E21');
+    		
+            if (bandages.length > 0) {
+                var startTime = Orion.Now();
+                Orion.BandageSelf();
+                Orion.WaitJournal('curou|escorregaram|envenenado|nao precisa', startTime, startTime + 5600);
+            } else {
+                Orion.Print('Acabou as bandagens!!');
+                Orion.Wait(1000);
+            }
+        }
+    }
+}
