@@ -1,0 +1,50 @@
+const containerMaterials = '0x4002A211';
+const containerRocks = '0x4008324E'
+const vulcanicRockType = '0x1779';
+const quartzoGeodeType = '0x4B49|0x4B4A';
+const geodeShardType = '0x4B48';
+
+const tool = '0x0F51';
+
+function Autostart() {
+	while(Orion.Count(vulcanicRockType, any, containerRocks) > 0) {
+		Orion.ClearJournal();
+		
+		Orion.Wait(300);
+		moveItems(containerRocks, backpack, vulcanicRockType, any, 1);
+		Orion.Wait(300);
+		
+		// Quebra rocha
+		Orion.UseType(tool);
+		Orion.WaitTargetType(vulcanicRockType);
+		Orion.Wait(300);
+		
+		// Quebra quartzo
+		Orion.UseType(tool);
+		Orion.WaitTargetType(quartzoGeodeType);
+		Orion.Wait(300);
+		
+		while(Orion.Count(geodeShardType, any, backpack) > 0) {
+			moveItems(backpack, containerMaterials, geodeShardType, any, 1);
+			Orion.Wait(300);
+		}
+		
+		Orion.Wait(300);
+	}
+}
+
+/**
+* Move itens entre containers
+* @param string containerOrigin 
+* @param string containerDestiny 
+* @param string graphic 
+* @param string color 
+* @param integer quantity 
+*/
+function moveItems(containerOrigin, containerDestiny, graphic, color, quantity) {
+    Orion.UseObject(containerOrigin);
+    Orion.Wait(200);
+    Orion.DragItemType(graphic, color, containerOrigin, (quantity - Orion.Count(graphic, color, containerDestiny)));
+    Orion.Wait(200);
+    Orion.DropDraggedItem(containerDestiny, 76, 98);
+}
