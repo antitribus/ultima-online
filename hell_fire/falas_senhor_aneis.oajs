@@ -1,0 +1,10 @@
+function falasSenhorAneis() {
+	Orion.Say('Ola');
+	Orion.Wait(300);
+	
+	Orion.Say('Ajuda');
+	Orion.Wait(300);
+	
+	Orion.Say('Aceito');
+	Orion.Wait(300);
+}
