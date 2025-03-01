@@ -1,0 +1,148 @@
+const container = '0x400832A8'; // coloque aqui o ID do bau onde estão os lingotes no seu banco
+const ingots = '0x1BEF';
+const tool = '0x1EB8';
+const comida = '0x097B'; // coloque aqui o tipo de comida
+const porta = '0x40058C00';
+
+function pegarIngots() {
+	Orion.UseObject(container);
+	moveItems(container, backpack, ingots, '0x0000', 200, false);
+	Orion.Wait(300);
+}
+
+function andarBanco(){
+	Orion.WalkTo(2516,560,0);
+	Orion.Wait(300);
+}
+
+function abrirBanco() {
+	Orion.Say('banker bank');
+	Orion.Wait(300);
+}
+
+function andarPortaFora(){
+	Orion.WalkTo(2531,560,0);
+	Orion.Wait(300);
+}
+
+function andarPortaDentro(){
+	Orion.WalkTo(2531,558,0);
+	Orion.Wait(300);
+}
+
+function abrirPorta() {
+	Orion.UseObject(porta);
+	Orion.Wait(300);
+}
+
+function andarVendedor() {
+	Orion.WalkTo(2531,552,0);
+	Orion.Wait(300);
+}
+
+function merendar(){
+	Orion.UseType(comida);
+	Orion.Wait(300);
+}
+
+function vender() {
+	Orion.Sell('TINKER');
+	Orion.Wait(300);
+	Orion.Sell('TINKER');
+	Orion.Wait(300);
+	Orion.Sell('TINKER');
+	Orion.Wait(300);
+}
+
+function guardarDinheiro() {
+	moveItems(backpack, container ,'0x0EED|', '0x0000', 99999, true);
+	Orion.Wait(300);
+}
+
+function moveItems(containerOrigin, containerDestiny, type, color, quantity, quantityReal) {
+    Orion.UseObject(containerOrigin);
+    Orion.Wait(200);
+    const qtd = quantityReal ? quantity : (quantity - Orion.Count(type, color, containerDestiny));
+    Orion.DragItemType(type, color, containerOrigin, qtd);
+    Orion.Wait(200);
+    Orion.DropDraggedItem(containerDestiny, 76, 98);
+}
+
+function fazerLockpick() {
+	Orion.UseType(tool);
+	
+	if(Orion.InJournal('fazer nada')) {
+		Orion.StopMacro();
+	}
+	
+	Orion.Wait(300);
+	
+	 if (Orion.WaitForMenu(1000)) {
+          var menu0 = Orion.GetMenu('last');
+          
+          if (menu0 !== null) {
+              if (menu0.Name() === 'Funilaria') {
+                  menu0.Select('Ferramentas');
+              } else {
+              	Orion.CloseGump(menu0);
+              }
+			
+              Orion.Wait(200);
+          }
+      }
+      
+      Orion.Wait(300);
+      
+       var menu1 = Orion.GetMenu('last');
+       
+       if (menu1 !== null) {
+           if (menu1.Name() === 'Ferramentas') {
+               menu1.Select('lockpick (1 lingote de ferro)');
+           }
+
+		   Orion.Wait(200);
+		   Orion.CloseGump(menu1);
+       }
+       
+       Orion.Wait(300);
+      
+      Orion.WaitJournal('Voce colocou|falhou', Orion.Now(), Orion.Now() + 4000, 'my|sys');
+}
+
+function Autostart() {
+	while(true) {
+		if(Orion.InJournal('mundo iniciado')) {
+			Orion.Wait(15000);
+		}
+		
+		Orion.ClearJournal();
+		
+		merendar();
+		
+		const pesado = Player.Weight() >= ( Player.MaxWeight() - 50 );
+		
+		if(Orion.Count(ingots, '0x0000', backpack) < 1) {
+			andarPortaFora();
+			while(Player.Y() >= 560) {
+				abrirPorta();
+				andarVendedor();
+				Orion.Wait(1000);
+			}
+			vender();
+			andarPortaDentro();
+			while(Player.Y() <= 558) {
+				abrirPorta();
+				andarBanco();
+				Orion.Wait(1000);
+			}
+			abrirBanco();
+			guardarDinheiro();
+			
+			if(!pesado) {
+				pegarIngots();
+			}
+		} else {
+			fazerLockpick();
+		}
+	}
+}
