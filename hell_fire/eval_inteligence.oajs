@@ -1,0 +1,14 @@
+function AutoStart(){
+	// Se fecha com o animal em um local onde você não o perde de vista.
+	// Seleciona ele como target, o script pega o ultima alvo.
+ 
+	Orion.Say('All Stop');
+ 
+	while(Orion.SkillValue('Evaluating Intelligence', 'real') <1000){
+		Orion.ClearJournal();
+  
+    Orion.WaitTargetObject('lasttarget');
+    Orion.UseSkill('Evaluating Intelligence');
+    Orion.WaitJournal('Voce nao', Orion.Now(), Orion.Now()+4000);
+	}
+}
