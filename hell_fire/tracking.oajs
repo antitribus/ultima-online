@@ -1,0 +1,21 @@
+function AutoStart()
+{
+	while(true) {
+		Orion.ClearJournal();
+		Orion.UseSkill('Tracking');
+		Orion.Wait(200);
+		
+		if (Orion.WaitForMenu(1000)) {
+			var menu0 = Orion.GetMenu('last');
+			
+			if (menu0 !== null) {
+				if (menu0.Name() === "Tracking")
+					menu0.Select('Animals');
+			}
+			
+			Orion.CloseGump(menu0)
+		}
+		
+		Orion.WaitJournal('Voce nao|Voce falhou|Nao h', Orion.Now(), Orion.Now() + 1500);
+	}
+}
