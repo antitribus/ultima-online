@@ -7,14 +7,14 @@
 //-----------------------------------------------------------------
 var varadepesca = '0x0DC0' // ID da vara de pesca
 var baubarco = '0x3E65|0x3EB9|0x3E93|0x3EAE'; // type do bau do barco em todas as direções
-var pesodefinido = 300; // Peso para jogar itens fora
+var pesodefinido = Player.MaxWeight() - 50; // Peso para jogar itens fora
 var xmaximo = 2633; // Posição em X para voltar
 //-----------------------------------------------------------------
 
 var time = 500;
 
 function Autostart() { 
-    Orion.Exec('fishing', true); 
+	Orion.Exec('fishing', true); 
 }
 
 function fishing() {
@@ -31,7 +31,7 @@ function fishing() {
 
 function guardar() {
     var itens = '0x1BD7|0x15F8|0x14F3|0x10E1|0x0DE1|0x0DBF|0x1059';
-    var itens = Orion.FindType(itens, 0x0000, '0xFFFFFFFF');
+    var itens = Orion.FindType(itens, 0x0000, 'backpack|0xFFFFFFFF');
     var bauBarcoID = Orion.FindType(baubarco, '0x0000', '0xFFFFFFFF');
 
     for (i = 0; i < itens.length; i++) {
@@ -41,12 +41,6 @@ function guardar() {
         Orion.DropDraggedItemRelative(0, 0, 0);
         Orion.Wait(time);
     }
-
-    Orion.Step('n');
-    Orion.Wait(time);
-
-    Orion.Step('w');
-    Orion.Wait(time);
 
     Orion.UseType(baubarco, 'any', '0xFFFFFFFF');
     Orion.Wait(time);
@@ -61,12 +55,6 @@ function guardar() {
         Orion.DropDraggedItem(bauBarcoID[0]);
         Orion.Wait(time);
     }
-
-    Orion.Step('e');
-    Orion.Wait(time);
-
-    Orion.Step('s');
-    Orion.Wait(time);
 }
 
 function pesar() {
