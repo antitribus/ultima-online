@@ -1,0 +1,23 @@
+function AddMount() {
+    Orion.CancelTarget();
+    Orion.Wait(100);
+    Orion.AddObject('myMount');
+    Orion.Print('-1', 'Target your mount');
+    Orion.WaitWhileTargeting();
+}
+
+function MountAndDismountAllStay() {
+    if (!Orion.ObjAtLayer('Mount')) {
+        if (!Orion.FindObject('myMount'))
+            AddMount();
+        else
+            Orion.Say('All Come')
+            Orion.UseObject('myMount');
+    }
+    else
+        Orion.UseObject('self');
+    Orion.Wait(200);
+    Orion.Say('All Stay');
+    if (Orion.WaitForTarget(200))
+        Orion.TargetObject('lasttarget');
+}
