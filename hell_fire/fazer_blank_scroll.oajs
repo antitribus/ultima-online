@@ -1,0 +1,26 @@
+function AutoStart()
+{
+	while(true){
+  	Orion.UseType('0x1034', '0xFFFF');
+  	if (Orion.WaitForMenu(1000))
+  	{
+  		var menu0 = Orion.GetMenu('last');
+  		if (menu0 !== null)
+  		{
+  			if (menu0.Name() === "HellFire")
+  				menu0.Select('Diversos');
+  		}
+  	}
+  	Orion.Wait(1000);
+  	if (Orion.WaitForMenu(1000))
+  	{
+  		var menu1 = Orion.GetMenu('last');
+  		if (menu1 !== null)
+  		{
+  			if (menu1.Name() === "Diversos")
+  				menu1.Select('blank scroll (1 parchment)');
+  		}
+  	}
+  	Orion.Wait(4000);
+	}
+}
