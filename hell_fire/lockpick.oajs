@@ -1,0 +1,22 @@
+function AutoStart(){
+  const lock = '0x14FB';
+	const key = '0x400013CE';
+	const bau = '0x400013CD';
+
+	while(true) {
+		Orion.ClearJournal();
+		Orion.UseType(lock);
+		
+		if (Orion.WaitForTarget(1000)) {
+			Orion.TargetObject(bau);
+		}
+		
+		Orion.WaitJournal('chave para isto|Voce nao pode', Orion.Now(), Orion.Now() + 4000);
+	
+    Orion.UseObject(key);
+    
+    if (Orion.WaitForTarget(1000)) {
+      Orion.TargetObject(bau);
+    }
+	}
+}
