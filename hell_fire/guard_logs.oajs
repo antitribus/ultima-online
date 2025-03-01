@@ -1,0 +1,8 @@
+function guardLogs() {
+	const logs = '0x1BDD|0x318F';
+	
+	while(Orion.Count(logs, any, '0x4008324E')) {
+		moveItems('0x4008324E', '0x4002A211', logs, any, 1000);
+		Orion.Wait(300)
+	}
+}
