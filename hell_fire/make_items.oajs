@@ -1,9 +1,9 @@
 /**
- * Macro para criação de itens
- * @author: Antitribus
- * @updated_at: 2025-02-08
- * @shard: HellFire <hfshard.com.br>
- */
+* Macro para criação de itens
+* @author: Antitribus
+* @updated_at: 2025-02-08
+* @shard: HellFire <hfshard.com.br>
+*/
 
 // Área de variáveis para serem alteradas
 // ----------------------------------------------------------------------------------------------
@@ -18,7 +18,7 @@ const luckContainerID = '0x400E7457';
 const guardContainerID = '0x4004D3A7';
 
 // Item à ser fabricado
-const selectedItem = 'bodySashOfForce5';
+const selectedItem = 'agapiteArrow4';
 
 // Define o total de itens à serem feitos
 const totalItemsToManufacture = 10;
@@ -32,6 +32,9 @@ const forced = false;
 // ----------------------------------------------------------------------------------------------
 
 const tools = {
+    warfork: '0x1404',
+    danger: '0x0F51',
+    fletcher: '0x1022',
     forge: '0x0FB1',
     tinker: '0x1EB9',
     tailor: '0x0F9D'
@@ -74,6 +77,10 @@ const ingots = {
     lendario: { parentId: 40, id: 39, name: 'lendario', type: "0x1BEF", color: "0x0793" }
 };
 
+const logs = {
+    comum: { parentId: 42, id: 1, name: 'comum', type: "0x1BDD", color: "0x0000" },
+};
+
 const pedras = {
     amber: { parentId: 43, id: 1, name: 'amber', type: "0x0F25", color: "0x0000" },
     diamond: { parentId: 43, id: 2, name: 'diamond', type: "0x0F26", color: "0x0000" },
@@ -84,13 +91,17 @@ const pedras = {
     sapphire: { parentId: 43, id: 7, name: 'sapphire', type: "0x0F11", color: "0x0000" },
     amethyst: { parentId: 43, id: 8, name: 'amethyst', type: "0x0F16", color: "0x0000" },
     tourmaline: { parentId: 43, id: 9, name: 'tourmaline', type: "0x0F18", color: "0x0000" },
-    vulcanicRock: { parentId: 43, id: 10, name: 'vulcanic rock', type: "0x1779", color: "0x0000", unique: true },
-    geodeShard: { parentId: 43, id: 11, name: 'geode shard', type: "0x4B48", color: "0x0000", unique: true },
-    rock: { parentId: 43, id: 12, name: 'rock', type: "0x1363", color: "0x0000", unique: true }
+    vulcanicRock: { parentId: 43, id: 10, name: 'vulcanic rock', type: "0x1779|0x4B4B", color: "0x0000", unique: true },
+    geodeShard: { parentId: 43, id: 11, name: 'geode shard', type: "0x4B48", color: "any", unique: true },
+    rock: { parentId: 43, id: 12, name: 'rock', type: "0x1363", color: "0x0000", unique: true },
+    quartzoGeode: { parentId: 0, id: 12, name: 'quartzo geode', type: "0x4B4A|0x4B49", color: "any", unique: true }
 };
 
 const variados = {
+    feathers: { parentId: 44, id: 1, name: 'feathers', type: "0x1BD1", color: "0x0000" },
+    shafts: { parentId: 44, id: 2, name: 'shafts', type: "0x1BD4", color: "0x0000" },
     cloths: { parentId: 44, id: 4, name: 'cloths', type: "0x175D", color: "0x0000" },
+    hidesCut: { parentId: 44, id: 10, name: 'hides cut', type: "0x1067", color: "0x0000" },
 };
 
 const items = {
@@ -98,6 +109,7 @@ const items = {
         type: '0x108A',
         color: '0x008A',
         tool: tools.tinker,
+        targets:[],
         materials: [
             { item: pedras.ruby, quantity: 4 },
             { item: pedras.diamond, quantity: 4 },
@@ -111,6 +123,7 @@ const items = {
         type: '0x1087',
         color: '0x008A',
         tool: tools.tinker,
+        targets:[],
         materials: [
             { item: pedras.sapphire, quantity: 2 },
             { item: pedras.ruby, quantity: 4 },
@@ -124,7 +137,7 @@ const items = {
         type: '0x152E',
         color: '0x0000',
         tool: tools.tailor,
-        target: variados.cloths,
+        targets: [variados.cloths], // necessário quando a ferramente precisa dar target no item para abrir gump
         materials: [
             { item: pedras.tourmaline, quantity: 2 },
             { item: pedras.amethyst, quantity: 2 },
@@ -139,7 +152,7 @@ const items = {
         type: '0x1517',
         color: '0x0000',
         tool: tools.tailor,
-        target: variados.cloths,
+        targets: [variados.cloths],
         materials: [
             { item: pedras.starSapphire, quantity: 2 },
             { item: pedras.emerald, quantity: 2 },
@@ -154,7 +167,7 @@ const items = {
         type: '0x1541',
         color: '0x0000',
         tool: tools.tailor,
-        target: variados.cloths,
+        targets: [variados.cloths],
         materials: [
             // precisa de 4 nightshade por item, faz favor né?
             { item: variados.cloths, quantity: 4 }
@@ -164,11 +177,91 @@ const items = {
             { menu: 'Diversos', select: '+5 Body Sash of Force (4 folded cloth, 4 Nightshade)' }
         ]
     },
+    copperArrow2: {
+        type: '0x0F3F',
+        color: '0x0641',
+        tool: tools.fletcher,
+        targets:[],
+        materials: [
+            { item: ingots.copper, quantity: 1 },
+            { item: variados.shafts, quantity: 1 },
+            { item: variados.feathers, quantity: 1 },
+        ],
+        steps: [
+            { menu: 'Ferramentas de BC', select: 'Flexas do HellFire' },
+            { menu: 'Flexas Especiais', select: '+2 Copper Arrow (1 arrow shaft, 1 feather, 1 lingote de copper)' }
+        ]
+    },
+    agapiteArrow4: {
+        type: '0x0F3F',
+        color: '0x0400',
+        tool: tools.fletcher,
+        moveQuantity: 999,
+        targets: [],
+        materials: [
+            { item: ingots.agapite, quantity: 1 },
+            { item: variados.shafts, quantity: 1 },
+            { item: variados.feathers, quantity: 1 },
+        ],
+        steps: [
+            { menu: 'Ferramentas de BC', select: 'Flexas do HellFire' },
+            { menu: 'Flexas Especiais', select: '+4 Agapite Arrow (1 arrow shaft, 1 feather, 1 lingote de agapite)' }
+        ]
+    },
+    braceleteStamina: {
+        type: '0x1F06',
+        color: '0x0785',
+        tool: tools.tinker,
+        materials: [
+            { item: ingots.cromita, quantity: 12 },
+        ],
+        steps: [
+            { menu: 'Joias', select: 'Bracelete de Stamina (12 lingotes de cromita)' }
+        ]
+    },
+    bootsOfSpeed10: {
+        type: '0x170B',
+        color: '0x0000',
+        tool: tools.tailor,
+        targets: [variados.hidesCut],
+        materials: [
+            { item: ingots.gold, quantity: 5 },
+            { item: variados.hidesCut, quantity: 8 },
+        ],
+        steps: [
+            { menu: 'Leather', select: 'Sapatos' },
+            { menu: 'Sapatos', select: '+10 Boots of Speed (8 cut up leather, 5 lingotes de ouro)' }
+        ]
+    },
+    shafts: {
+        type: '0x1BD4',
+        color: '0x0000',
+        tool: tools.danger,
+        targets: [logs.comum],
+        moveQuantity: 100,
+        materials: [
+            { item: logs.comum, quantity: 100 },
+        ],
+        steps: [
+            { menu: 'What do you want to carve the wood into?', select: 'arrow shaft (1 log)' }
+        ]
+    },
+    geodeShard: {
+        type: pedras.geodeShard.type,
+        color: pedras.geodeShard.color,
+        tool: tools.warfork,
+        targets: [pedras.vulcanicRock, pedras.quartzoGeode],
+        moveQuantity: 100,
+        materials: [
+            { item: pedras.vulcanicRock, quantity: 1 },
+        ],
+        steps: []
+    },
 };
 
 /**
- * Execução principal
- */
+* Execução principal
+*/
 function AutoStart() {
     Orion.Exec('eat');
 
@@ -192,11 +285,11 @@ function AutoStart() {
 }
 
 /**
- * Obtém a quantidade de itens de um container
- * @param {object} material 
- * @param {*} containerReference 
- * @returns 
- */
+* Obtém a quantidade de itens de um container
+* @param {object} material 
+* @param {*} containerReference 
+* @returns 
+*/
 function getQuantity(material, containerReference) {
     var quantity = 0;
     const items = Orion.FindTypeEx(material.item.type, material.item.color, containerReference);
@@ -212,12 +305,12 @@ function getQuantity(material, containerReference) {
 }
 
 /**
- * 
- * @param {string} containerOrigin 
- * @param {int} maxQuantity 
- * @param {object} material 
- * @returns object
- */
+* 
+* @param {string} containerOrigin 
+* @param {int} maxQuantity 
+* @param {object} material 
+* @returns object
+*/
 function getMaterialFromMaterialContainer(containerOrigin, material) {
     var quantity = getQuantity(material, backpack);
 
@@ -246,10 +339,10 @@ function getMaterialFromMaterialContainer(containerOrigin, material) {
 }
 
 /**
- * Clica no botão de um gump pelo seu id
- * @param {string} menu 
- * @param {int} id 
- */
+* Clica no botão de um gump pelo seu id
+* @param {string} menu 
+* @param {int} id 
+*/
 function clickButtonGump(menu, id) {
     gumpSaveIgnore(menu);
 
@@ -264,10 +357,10 @@ function clickButtonGump(menu, id) {
 }
 
 /**
- * Adiciona a quantidade numérica a um gump
- * @param {string} menu 
- * @param {int} quantity 
- */
+* Adiciona a quantidade numérica a um gump
+* @param {string} menu 
+* @param {int} quantity 
+*/
 function setGumpQuantity(menu, quantity) {
     gumpSaveIgnore(menu);
 
@@ -289,11 +382,11 @@ function setGumpQuantity(menu, quantity) {
 }
 
 /**
- * Obtém o texto de um gump
- * @param {string} menu 
- * @param {int} id 
- * @returns string | undefined
- */
+* Obtém o texto de um gump
+* @param {string} menu 
+* @param {int} id 
+* @returns string | undefined
+*/
 function getGumpText(menu, id) {
     gumpSaveIgnore(menu);
 
@@ -308,9 +401,9 @@ function getGumpText(menu, id) {
 }
 
 /**
- * Ignora o gump de save do shard
- * @param {string} menu 
- */
+* Ignora o gump de save do shard
+* @param {string} menu 
+*/
 function gumpSaveIgnore(menu) {
     var gumpText = "";
     var gump0 = undefined;
@@ -335,9 +428,25 @@ function makeItem(item) {
     Orion.UseType(item.tool);
     Orion.Wait(300);
 
-    if (item.target) {
+    if (item.targets) {
+        Orion.CancelTarget();
+        Orion.Wait(250);
+
+        item.targets.forEach(function (target) {
+            Orion.UseType(item.tool);
+            Orion.Wait(500);
+
+            Orion.TargetType(target.type, target.color, backpack, 'fast', false);
+        });
+    } else {
         Orion.TargetType(item.target.type, item.target.color, backpack, 'fast', false);
-        Orion.Wait(150);
+    }
+
+    Orion.Wait(150);
+
+    if (!item.steps) {
+        Orion.Wait(250);
+        return;
     }
 
     item.steps.forEach(function (step) {
@@ -390,7 +499,8 @@ function guardItem(item) {
                 destiny = Orion.Contains(props.toLowerCase(), 'luck', true) ? luckContainerID : guardContainerID;
             }
 
-            moveItems(backpack, destiny, item.type, item.color, 1);
+            const quantity = item.moveQuantity || 1;
+            moveItems(backpack, destiny, item.type, item.color, quantity);
         }
     }
 }
@@ -412,8 +522,8 @@ function moveItems(containerOrigin, containerDestiny, graphic, color, quantity) 
 }
 
 /**
- * Faz o char comer quando estiver com fome
- */
+* Faz o char comer quando estiver com fome
+*/
 function eat() {
     const foods = [
         '0x097B',
