@@ -1,0 +1,31 @@
+function AutoStart()
+{
+	while(true) {
+		var x = Player.X();
+		var y = Player.Y();
+		
+		Orion.ClearJournal();
+		
+		var findItems0 = Orion.FindType('0x0DE1', 'any', backpack);
+		
+		if (findItems0.length)
+		{
+			Orion.DragItem(findItems0[0], 1);
+			Orion.Wait('300');
+		}
+		
+		Orion.DropDraggedItem('ground', x -1, y, 0);
+		Orion.Wait('500');
+		
+		if (Orion.InJournal('many items')) {
+			var goX = Player.X() + 2;
+			Orion.Say('Andando para ' + goX);
+			Orion.WalkTo(goX, Player.Y(), Player.Z());
+			Orion.Wait(1000);
+		}
+		else {
+			Orion.UseType('0x0DE1', '0xFFFF', '0xFFFFFFFF');
+			Orion.Wait(500);
+		}
+	}
+}
