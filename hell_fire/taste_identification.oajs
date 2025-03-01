@@ -1,0 +1,10 @@
+function AutoStart(){
+	Orion.CharPrint('self', '0x0035', 'Selecione uma comida');
+	Orion.WaitForAddObject(Orion.AddObject('gmzar-ti'));
+	
+	while(Orion.SkillValue('Taste Identification', 'real')<1000){
+		Orion.ClearJournal();
+		Orion.UseSkill('Taste Identification', 'gmzar-ti');
+		Orion.WaitJournal('Voce nao', Orion.Now(), Orion.Now()+3000);
+	}
+}
