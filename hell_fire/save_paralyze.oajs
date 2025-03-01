@@ -1,0 +1,11 @@
+function saveParalyze(){
+	if(Player.Paralyzed()) {
+		Orion.Cast('Magic Arrow');
+		if(Orion.ShardName().indexOf('Hell') !== -1)
+			Orion.WaitTargetType('0x0F0D', '0xFFFF');
+		else
+			Orion.WaitTargetObject(self)	
+	} else {
+		Orion.CharPrint('self', '0x00AF', 'Não paralizado');
+	}
+}
