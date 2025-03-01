@@ -1,0 +1,25 @@
+function recallVipHF() {
+  Orion.WarMode(false);
+  Orion.Say('.gocidade');
+  
+  if (Orion.WaitForGump(1000)) {
+    var gump0 = Orion.GetGump('last');
+    if ((gump0 !== null) && (!gump0.Replayed()) && (gump0.ID() === '0x00000505'))
+    {
+      gump0.Select(Orion.CreateGumpHook(16));
+      Orion.Wait(100);
+    }
+  }
+  
+  Orion.Wait(500);
+  
+  if (Orion.WaitForGump(1000))
+  {
+    var gump1 = Orion.GetGump('last');
+    if ((gump1 !== null) && (!gump1.Replayed()) && (gump1.ID() === '0x00000505'))
+    {
+      gump1.Select(Orion.CreateGumpHook(0));
+      Orion.Wait(100);
+    }
+  }
+}
