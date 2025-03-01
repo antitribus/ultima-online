@@ -1,0 +1,45 @@
+function AutoStart() {
+	while(true) {
+		moveItems('0x40052AB1', backpack, '0x1BDD', 'any', 1);
+		Orion.Wait(500);
+				
+		Orion.UseType('0x1034');
+		
+		if (Orion.WaitForTarget(1000))
+			Orion.TargetType('0x1BDD');
+			
+		if (Orion.WaitForMenu(1000))
+		{
+			var menu0 = Orion.GetMenu('last');
+			if (menu0 !== null)
+			{
+				if (menu0.Name() === "HellFire")
+					menu0.Select('Tabuas');
+			}
+			
+			Orion.CloseGump(menu0);	
+		}
+		
+		Orion.WaitJournal('colocou|falhou', Orion.Now(), Orion.Now() + 10000);
+		
+		if (Orion.Count('0x1BD7', 'any', backpack) >= 100){
+			moveItems(backpack, '0x40052AB1', '0x1BD7', 'any', 200);
+		}
+	}	
+}
+
+/**
+* Move itens entre containers
+* @param string containerOrigin 
+* @param string containerDestiny 
+* @param string graphic 
+* @param string color 
+* @param integer quantity 
+*/
+function moveItems(containerOrigin, containerDestiny, graphic, color, quantity) {
+    Orion.UseObject(containerOrigin);
+    Orion.Wait(200);
+    Orion.DragItemType(graphic, color, containerOrigin, quantity);
+    Orion.Wait(200);
+    Orion.DropDraggedItem(containerDestiny, 76, 98);
+}
