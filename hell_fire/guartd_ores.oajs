@@ -1,0 +1,27 @@
+function guardOres() {
+    var containerOres = '0x40052AB4';
+    var containerDestiny = '0x4002A211';
+    var listbs = [
+        { id: '0', nome: 'Ceramic Ingots', color: '0x09B0', qtd: '200' },
+        { id: '1', nome: 'Iron Ingots', color: '0x0000', qtd: '200' },
+        { id: '2', nome: 'Bronze Ingots', color: '0x09B3', qtd: '200' },
+        { id: '3', nome: 'Silver Ingots', color: '0x09B4', qtd: '200' },
+        { id: '4', nome: 'Gold Ingots', color: '0x09B5', qtd: '200' },
+        { id: '5', nome: 'Radioactive Ingots', color: '0x09B7', qtd: '200' },
+        { id: '6', nome: 'Chaos Ingots', color: '0x09BA', qtd: '2' },
+        { id: '7', nome: 'Order Ingots', color: '0x09B9', qtd: '2' },
+        { id: '8', nome: 'Infernal Ingots', color: '0x09BC', qtd: '2' },
+        { id: '9', nome: 'Celestial Ingots', color: '0x09BD', qtd: '2' },
+        { id: '10', nome: 'Meteor Ingots', color: '0x07FE', qtd: '2' },
+    ];
+
+    while (true) {
+        for (var i = 0; i < listbs.length; i++) {
+            var ores = Orion.FindType('0x19B9|0x19B8|0x19B7|0x19BA', listbs[i].color, containerOres);
+            for (var j = 0; j < ores.length; j++) {
+                Orion.MoveItem(ores[j], 800, containerDestiny);
+                Orion.Wait(600);
+            }
+        }
+    }
+}
