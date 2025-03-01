@@ -1,0 +1,21 @@
+function taming() {
+	Orion.WarMode(false);
+	Orion.Wait(200);
+	
+	Orion.Say('all stay');
+	Orion.Wait(150);
+	Orion.UseType('0x0EFC', '0x0000');
+	Orion.Wait(150);
+	
+	Orion.UseType('0x0E81');
+	Orion.Wait(150);
+	Orion.CancelTarget();
+	
+	Orion.UseType('0x1086');
+	Orion.Wait(150);
+	
+	Orion.UseSkill('Peacemaking', 'lasttarget');
+	Orion.Wait(200);
+	
+	Orion.UseSkill('Animal Taming', 'lasttarget');
+}
