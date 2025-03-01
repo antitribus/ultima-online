@@ -1,0 +1,53 @@
+function AutoStart()
+{
+	while(true){
+		Orion.ClearJournal();
+		
+		if(Orion.InJournal('save|salvar|mundo|world')) {
+    		Orion.Wait(15000);
+    	}
+    	
+		Orion.UseType('0x0F9D');
+		
+		Orion.Wait(500);
+		
+		if (Orion.WaitForTarget(1000))
+			Orion.TargetType('0x175D');
+			
+		Orion.Wait(500);
+				
+		if (Orion.WaitForMenu(1000)) {
+			var menu0 = Orion.GetMenu('last');
+			if (menu0 !== null)
+			{
+				if (menu0.Name() === "Roupas")
+					menu0.Select('Headwear');
+					
+				Orion.CloseGump(menu0);	
+			}
+		}
+		
+		Orion.Wait(500);
+		
+		if (Orion.WaitForMenu(1000))
+		{
+			var menu1 = Orion.GetMenu('last');
+			if (menu1 !== null)
+			{
+				if (menu1.Name() === "Chapeus")
+					menu1.Select('bandana (2 folded cloth, 1 spool of thread)');
+			}
+			
+			Orion.CloseGump(menu1);	
+		}
+		
+		Orion.WaitJournal('Voce fez|falhou|errou', Orion.Now(), Orion.Now() + 7000);
+		
+		Orion.UseType('0x0F9E');
+		
+		if (Orion.WaitForTarget(1000))
+			Orion.TargetType('0x153F');
+			
+		Orion.Wait(500);	
+	}		
+}
