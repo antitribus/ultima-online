@@ -1,0 +1,32 @@
+function AutoStart()
+{
+	while(true){
+		Orion.UseType('0x0E34', '0xFFFF');
+		
+		if (Orion.WaitForMenu(1000))
+		{
+			var menu0 = Orion.GetMenu('last');
+			if (menu0 !== null)
+			{
+				if (menu0.Name() === "What sort of map do you want to draw ?")
+					menu0.Select('Detail Map');
+			}
+			
+			Orion.CloseGump(menu0);
+		}
+		
+		Orion.Wait(3000);
+		
+		moveItems(backpack, '0x40011DEF', '0x14EB', '0x0000', 1);
+		Orion.Wait(500)
+	}
+	
+}
+
+function moveItems(containerOrigin, containerDestiny, graphic, color, quantity) {
+    Orion.UseObject(containerOrigin);
+    Orion.Wait(200);
+    Orion.DragItemType(graphic, color, containerOrigin, (quantity - Orion.Count(graphic, color, containerDestiny)));
+    Orion.Wait(200);
+    Orion.DropDraggedItem(containerDestiny, 76, 98);
+}
