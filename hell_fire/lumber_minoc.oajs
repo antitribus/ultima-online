@@ -1,0 +1,158 @@
+// Paste your code here :)// Macro de Lumber
+//----------------------------------------------------------------------
+var tool='0x0F43'; // Type do machado
+var maxWeight =295; // Peso maximo
+var idRunebook='04035c52f';  // ID runebook (.mostraruid)
+var runaLumberPos=11; // Posicao runa floresta
+var runaBankPos=10; // Posicao runa bank
+var containerBank='0x400CBFF0'; // ID bau bank
+//----------------------------------------------------------------------
+
+var maxSearchDistance=30;  // Distancia para buscar arvores
+var treeWorldLocations=createArr(200,200); // Maximo de arvores
+var msgSuccess = 'Voce colocou';
+var msgError = 'Nao ha|falhou';
+var msgWait = 'Voce pos|Nao ha|Voce nao';
+var discart = false;
+
+function Autostart(){
+	Orion.Exec('Lumber', true);
+	//Orion.Exec('comer', true);
+}
+
+function discartLogs() {
+	var listbs = [
+            {id: '1', nome: 'Logs', color: '0x0000', qtd: '300'}
+     ];
+
+	var listTypes = [
+		//{id: '2', nome: 'Rock', type: '0x1363', color: '0x0000', qtd: '300'}
+	];
+	
+     for(var i=0; i< listbs.length; i++){
+         var ores = Orion.FindType('0x1BDD', listbs[i].color, backpack);
+         
+         for (var j=0; j < ores.length; j++){
+         	Orion.Drop(ores[j], listbs[i].qtd);
+            Orion.Wait(300);
+         }
+     }
+   
+}
+
+function Lumber(ptreeWorldLocation){
+//recall(false);
+var treeWorldLocation = ptreeWorldLocation == null ? FindTreesInArea() : ptreeWorldLocation;    
+for (c=0;c<treeWorldLocation.length;c++){
+Orion.ClearJournal();  
+comerPeixe();
+
+if(discart) {
+	discartLogs();
+}
+Orion.WalkTo(treeWorldLocation[c][0], treeWorldLocation[c][1], 0, 1, 200, 1);Orion.Wait(1000);
+LumberAgain(treeWorldLocation[c][0],treeWorldLocation[c][1]);
+if (Player.Weight()>=maxWeight){guardar();}
+else {
+while (Orion.InJournal(msgSuccess,0,0)){
+LumberAgain(treeWorldLocation[c][0],treeWorldLocation[c][1]);}}}
+Lumber(treeWorldLocation);}
+
+function FindTreesInArea(){ 
+var trueWorldLocCounter=0;
+for (c=(Player.X()-maxSearchDistance);c<(Player.X()+maxSearchDistance+1);c++){
+for (d=(Player.Y()-maxSearchDistance);d<(Player.Y()+maxSearchDistance+1);d++){
+if (Orion.ValidateTargetTile('tree', c, d)){
+treeWorldLocations[trueWorldLocCounter][0]=c;
+treeWorldLocations[trueWorldLocCounter][1]=d;
+trueWorldLocCounter++;}}}
+Orion.Print("Arvores encontrada e configurada, total: " + trueWorldLocCounter);
+treeWorldLocations.length=trueWorldLocCounter;
+return treeWorldLocations;}
+
+function createArr(x, y){
+var arr=new Array(x);
+for (var c=0; c<x; c++){arr[c]=new Array(y);}
+return arr;}
+
+function LumberAgain(x,y){
+comerPeixe();
+Orion.ClearJournal();
+Orion.EquipT(tool);Orion.UseType(tool);
+Orion.WaitTargetTile('tree',x,y,0);
+Orion.WaitJournal(msgWait, Orion.Now(), (Orion.Now() + 9000), 'my|sys');
+if (Orion.InJournal(msgSuccess,0,0)){LumberAgain(x,y);}
+else {return;}}
+
+function recall(pBank){
+while (Player.Mana()<Player.MaxMana()){Orion.UseSkill('Meditation');
+Orion.WaitJournal('peace|Você perdeu', Orion.Now(), (Orion.Now()+2000));}
+if (pBank == true){
+Orion.Say('.recall ' + idRunebook + ',' + runaBankPos);}
+else {Orion.Say('.recall ' + idRunebook + ',' + runaLumberPos);
+Orion.UseType('0x097B', '0x0000');} // Comer peixe
+Orion.Wait(12000);}
+
+function OpenBank(){Orion.Say('banker bank');Orion.Wait(500);}
+
+function guardar(){
+Orion.WalkTo(2514, 549, 0);
+
+//recall(true);
+OpenBank();
+while (Orion.Count('0x1BDD|0x318F', 'any', backpack)>=1){
+var finditem = Orion.FindType('0x1BDD|0x318F', 'any', backpack);
+for(i=0; i<finditem.length; i++){
+Orion.MoveItem(finditem[i], 0, containerBank);Orion.Wait(700);} 
+Orion.Wait(100);}
+//recall(false);
+}
+
+function comerPeixe() {
+	Orion.UseType(0x097B);
+	Orion.Wait(200);
+}
+
+function comer() {
+	const alimentos = [
+		'0x097B',
+		'0x160A',
+		'0x103B',
+		'0x0C79',
+	];
+	
+	//while(true){
+		//if(Orion.InJournal('fome')) {
+			for(var i=0; i < 5; i++){
+				alimentos.forEach(function(alimento) {
+					Orion.UseType(alimento);
+					Orion.Wait(1000);
+				});
+			}
+			
+			//Orion.ClearJournal();	
+		//}
+	//}	
+}
+
+function guardLogsHF() {
+    var containerLogs = '0x40052AB1';
+    var containerDestiny = '0x400B509D';
+    
+    if(Player.Name().toLowerCase() == 'mu de aries') {
+    	containerLogs = '0x40052AB4';
+    }
+    
+    if(Player.Name().toLowerCase() == 'shun de andromeda') {
+    	containerLogs = '0x400CBFF0';
+    }
+    
+    while (Orion.FindType('0x1BDD', 'any', containerLogs)) {
+         var logs = Orion.FindType('0x1BDD', 'any', containerLogs);
+         
+         for (var j = 0; j < logs.length; j++) {
+             Orion.MoveItem(logs[j], 800, containerDestiny);
+             Orion.Wait(1000);
+         }
+    }
+}
