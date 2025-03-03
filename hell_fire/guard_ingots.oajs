@@ -9,7 +9,7 @@ function guardIngots() {
 	}
 
 	while(Orion.Count(ingots, any, containerOrigin)) {
-		moveItems(container, containerDestiny, ingots, any, 500);
+		moveItems(containerOrigin, containerDestiny, ingots, any, 500);
 		Orion.Wait(500)
 	}
 }
