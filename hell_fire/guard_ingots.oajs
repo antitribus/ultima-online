@@ -8,7 +8,7 @@ function guardIngots() {
 		containerOrigin = '0x4008324E';
 	}
 
-	while(Orion.Count(ingots, any, container)) {
+	while(Orion.Count(ingots, any, containerOrigin)) {
 		moveItems(container, containerDestiny, ingots, any, 500);
 		Orion.Wait(500)
 	}
