@@ -1,13 +1,23 @@
 function guardIngots() {
 	const ingots = '0x09B0|0x1BEF|0x1BE9|0x1BF5|0x1BE3';
-	var container = '0x40052AB4';
-	
-	if(Player.Name().indexOf('Hades') !== -1) {
-		conatiner = '0x4008324E';
+	var containerOrigin = '0x40052AB4';
+	const containerDestiny = '0x4002A211';
+	const seccondChar = 'Hades';
+
+	if(Player.Name().indexOf(seccondChar) !== -1) {
+		containerOrigin = '0x4008324E';
 	}
-	
+
 	while(Orion.Count(ingots, any, container)) {
-		moveItems(container, '0x4002A211', ingots, any, 500);
+		moveItems(container, containerDestiny, ingots, any, 500);
 		Orion.Wait(500)
 	}
+}
+
+function moveItems(containerOrigin, containerDestiny, graphic, color, quantity) {
+    Orion.UseObject(containerOrigin);
+    Orion.Wait(200);
+    Orion.DragItemType(graphic, color, containerOrigin, (quantity - Orion.Count(graphic, color, containerDestiny)));
+    Orion.Wait(200);
+    Orion.DropDraggedItem(containerDestiny, 76, 98);
 }
