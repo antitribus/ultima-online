@@ -1,0 +1,77 @@
+/*
+ * @author: Antitribus
+ * @version: 1.0.
+ * @description: Macro para derreter qualquer tipo de arma e plate num determinado container
+ * @created_at: 2025-03-04
+ * @updated_at: 2025-03-04
+ * @shard: Hell Fire Shard
+  */
+  
+const containerIngotsID = '0x4002A211'; // onde serão jogados os ingots
+const containerPiecesID = '0x40052AB1'; // onde estão as plates e as armas
+const forgeID = '0x4002F0D6'; // ID da forja
+
+var listColors = [
+    { nome: 'Agapite Ingots', color: '0x0400' },
+    { nome: 'Prata Ingots', color: '0x0482' },
+    { nome: 'Shadow Ingots', color: '0x0770' },
+    { nome: 'Copper Ingots', color: '0x0641' },
+    { nome: 'Ouro Ingots', color: '0x084D' },
+    { nome: 'Verite Ingots', color: '0x07D1' },
+    { nome: 'Rose Ingots', color: '0x001C' },
+    { nome: 'Ferro Ingots', color: '0x0000' },
+    { nome: 'Valorite Ingots', color: '0x0515' },
+    { nome: 'BloodRock Ingots', color: '0x04C2' },
+    { nome: 'BlackRock Ingots', color: '0x0455' },
+    { nome: 'Magma Ingots', color: '0x008A' },
+    { nome: 'Mytheril Ingots', color: '0x052D' },
+    { nome: 'Bestial Ingots', color: '0x0497' },
+    { nome: 'Celestial Ingots', color: '0x0481' },
+    { nome: 'Vulcan Ingots', color: '0x0489' },
+    { nome: 'Ice Ingots', color: '0x0480' },
+    { nome: 'Cromita', color: '0x0785' }
+];
+
+function guardIngots() {
+    const ingots = Orion.FindType('0x1BF2|0x1BEF', 'any', backpack);
+
+    if (ingots.length) {
+        Orion.Say('Guardando os ingos');
+
+        const countIngots = Orion.Count('0x1BF2|0x1BEF', 'any', backpack);
+
+        Orion.MoveItem(ingots, countIngots, containerIngotsID);
+        Orion.Wait(200);
+    }
+}
+
+function melts(color) {
+    const piecesBackpack = Orion.FindType('any', color, containerPiecesID);
+
+    for (var k = 0; k < piecesBackpack.length; k++) {
+        const piece = piecesBackpack[k];
+        const serial = Orion.GetSerial(piece);
+
+        if (serial) {
+            Orion.Say('Derretendo o item ' + piece);
+
+            Orion.UseObject(forgeID);
+            Orion.Wait(250);
+
+            Orion.TargetObject(serial);
+            Orion.Wait(1000);
+        }
+    }
+}
+
+function AutoStart() {
+    while (Orion.Count('any', 'any', containerPiecesID)) {
+        guardIngots();
+
+        for (var i = 0; i < listColors.length; i++) {
+            const color = listColors[i].color;
+
+            melts(color);
+        }
+    }
+} 
