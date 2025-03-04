@@ -1,0 +1,50 @@
+/*
+* @author: Antitribus
+* @version: 1.0.0
+* @name: mergeBags
+* @description: Macro para juntar todos os itens de bags e backpacks numa única bag
+* @created_at: 2025-03-04
+* @updated_at: 2025-03-04
+* @shard: Hell Fire Shard
+*/
+
+
+function mergeBags() {
+	const bagTypes = ['0x0E75', '0x0E76'];
+	
+	for(var j =0; j < bagTypes.length; j++) {
+		Orion.Say(bagTypes[j]);
+		const bags = Orion.FindType(bagTypes[j], '0x0000', backpack);
+		Orion.Wait(150);
+			
+		for(var i = 0; i < bags.length; i++){
+			if(i ==0){
+				continue;
+			}
+			
+			const current = bags[i];
+			
+			Orion.UseObject(current);
+			Orion.Wait(150);
+			
+			const items = Orion.FindType('any', 'any', current);		
+			Orion.Wait(150);
+			
+			for(var k = 0; k < items.length; k++){
+				const serial = items[k];
+				const item = Orion.FindObject(serial);
+				
+				moveItems(current, bags[0], item.Graphic(), 'any', 999);
+				Orion.Wait(250);
+			}
+		}
+	}
+}
+
+function moveItems(containerOrigin, containerDestiny, graphic, color, quantity) {
+    Orion.UseObject(containerOrigin);
+    Orion.Wait(200);
+    Orion.DragItemType(graphic, color, containerOrigin, (quantity - Orion.Count(graphic, color, containerDestiny)));
+    Orion.Wait(200);
+    Orion.DropDraggedItem(containerDestiny, 76, 98);
+}
