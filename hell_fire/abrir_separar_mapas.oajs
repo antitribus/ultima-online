@@ -1,0 +1,79 @@
+const mapas = {
+    abertos: {
+        icone: '0x14EB',
+        cor: '0x0482'
+    },
+    fechados: {
+        icone: '0x14ED',
+        cor: '0x0482'
+    }
+};
+
+const containerIDs = {
+    mapas_fechados: '0x400A366A',
+    mapas_level_1: '0x40073F86',
+    mapas_level_2: '0x40073C4B',
+    mapas_level_3: '0x40073C38',
+    mapas_level_4: '0x40073BA2',
+    mapas_level_5: '0x40073C5D'
+}
+
+function AutoStart() {
+    const mapasFechados = Orion.FindType(mapas.fechados.icone, mapas.fechados.cor, containerIDs.mapas_fechados);
+
+    if (mapasFechados.length) {
+        Orion.Wait(500);
+
+        Orion.Print('Comecando a abrir ' + mapasFechados.length + ' mapas fechados');
+
+        while (Orion.Count(mapas.fechados.icone, mapas.fechados.cor, containerIDs.mapas_fechados) > 0) {
+            Orion.ClearJournal();
+            Orion.Wait(150);
+
+            Orion.UseType(mapas.fechados.icone, mapas.fechados.cor, containerIDs.mapas_fechados);
+            Orion.WaitJournal('Voce decifrou|Voce falhou', Orion.Now(), Orion.Now() + 2000);
+        }
+    }
+
+    const mapasAbertos = Orion.FindType(mapas.abertos.icone, mapas.abertos.cor, containerIDs.mapas_fechados);
+
+    if (mapasAbertos.length) {
+        Orion.Print('Comecando a mover ' + mapasAbertos.length + ' mapas abertos');
+
+        for (var i = 0; i < mapasAbertos.length; i++) {
+            Orion.ClearJournal();
+            Orion.Wait(150);
+
+            const mapaSerial = mapasAbertos[i];
+            const mapa = Orion.FindObject(mapaSerial);
+            const props = mapa.Properties();
+
+            if (isLevel(props, 1)) {
+                Orion.MoveItem(mapaSerial, 1, containerIDs.mapas_level_1);
+            }
+            else if (isLevel(props, 2)) {
+                Orion.MoveItem(mapaSerial, 1, containerIDs.mapas_level_2);
+            }
+            else if (isLevel(props, 3)) {
+                Orion.MoveItem(mapaSerial, 1, containerIDs.mapas_level_3);
+            }
+            else if (isLevel(props, 4)) {
+                Orion.MoveItem(mapaSerial, 1, containerIDs.mapas_level_4);
+            }
+            else if (isLevel(props, 5)) {
+                Orion.MoveItem(mapaSerial, 1, containerIDs.mapas_level_5);
+            }
+            else {
+                Orion.Print('Level do mapa ' + mapaSerial + ' nao identificado')
+            }
+
+            Orion.Wait(500);
+        }
+    }
+
+}
+
+// verifica o level nas propriedades do mapa
+function isLevel(props, level) {
+    return Orion.Contains(props.toLowerCase(), 'Nivel: ' + level, true);
+}
